@@ -165,6 +165,10 @@ public class ServerSession extends Thread {
 		broadcast(message);
 	}
 	
+	public void removeClient(String nickname){
+		
+	}
+	
 	/**
 	 * Log to server frame.
 	 * @param message Log message

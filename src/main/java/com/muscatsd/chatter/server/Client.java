@@ -12,11 +12,13 @@ import java.net.Socket;
  */
 public class Client {
 	
+	private Integer id;
 	private String nickname;
 	private Socket socket;
 	private ClientMessagesHandler clientMessagesHandler;
 	
-	public Client(String nickname,Socket socket,ClientMessagesHandler clientMessagesHandler){
+	public Client(Integer id,String nickname,Socket socket,ClientMessagesHandler clientMessagesHandler){
+		setId(id);
 		setNickname(nickname);
 		setSocket(socket);
 		setClientMessagesHandler(clientMessagesHandler);
@@ -57,5 +59,13 @@ public class Client {
 
 	public void setClientMessagesHandler(ClientMessagesHandler clientMessagesHandler) {
 		this.clientMessagesHandler = clientMessagesHandler;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
 	}
 }
