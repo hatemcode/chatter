@@ -9,6 +9,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.logging.Logger;
 
@@ -111,10 +112,13 @@ public class ClientAccessFrame extends JFrame implements ActionListener {
 	}
 	
 	public void enterChat(){
+		setServerHost(getServerHostText().getText());
 		 Runnable run = new Runnable() {
 			    public void run() {
 					try {
+						
 						setSocket(new Socket(getServerHost(),getServerPort()));
+						
 						OutputStream message = getSocket().getOutputStream();
 						DataOutputStream out = new DataOutputStream(message);
 						
@@ -142,7 +146,8 @@ public class ClientAccessFrame extends JFrame implements ActionListener {
 						}
 						
 					} catch (IOException e) {
-						JOptionPane.showMessageDialog(null, "Make sure about host and port.", "Error",JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Make sure about host and port." + e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
+						
 
 					}
 			    }

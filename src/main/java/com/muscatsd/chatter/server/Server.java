@@ -1,7 +1,10 @@
 package com.muscatsd.chatter.server;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.net.SocketAddress;
 import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
@@ -70,7 +73,8 @@ public class Server {
 	public Boolean start(){
 		try {
 			// prepare server socket and establish it
-			ServerSocket serverSocket = new ServerSocket(getServerPort());
+			ServerSocket serverSocket = new ServerSocket();
+			serverSocket.bind(new InetSocketAddress(InetAddress.getLocalHost().getHostName(), getServerPort()));
 			setSocket(serverSocket);
 			
 			// prepare server session and start it

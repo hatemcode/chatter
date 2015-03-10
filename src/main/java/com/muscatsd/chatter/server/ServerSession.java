@@ -35,7 +35,7 @@ public class ServerSession extends Thread {
 		
 		frameLog("\n Server session started ..");
 		try {
-			frameLog("\n Server Host/IP is: " + InetAddress.getLocalHost());
+			frameLog("\n Server Host/IP is: " + InetAddress.getLocalHost() + " " + getServerSocket().getInetAddress().toString());
 		} catch (UnknownHostException e) {
 
 			e.printStackTrace();
@@ -139,7 +139,8 @@ public class ServerSession extends Thread {
 				
 			} catch (IOException e) {
 
-				e.printStackTrace();
+				JOptionPane.showMessageDialog(null, e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
+
 			}
 			
 		}
