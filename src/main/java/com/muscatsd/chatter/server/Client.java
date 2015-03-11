@@ -17,6 +17,9 @@ public class Client {
 	private Socket socket;
 	private ClientMessagesHandler clientMessagesHandler;
 	
+	public Client(){
+	}
+	
 	public Client(Integer id,String nickname,Socket socket,ClientMessagesHandler clientMessagesHandler){
 		setId(id);
 		setNickname(nickname);

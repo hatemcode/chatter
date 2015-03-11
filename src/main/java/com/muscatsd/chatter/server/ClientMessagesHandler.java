@@ -7,7 +7,9 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.logging.Logger;
 
-import com.muscatsd.chatter.server.frame.ServerMainFrame;
+import com.hatemcode.chatter.responder.MessageResponder;
+import com.hatemcode.chatter.responder.imp.ClientMessageResponder;
+import com.muscatsd.chatter.server.frame.ServerFrame;
 
 public class ClientMessagesHandler extends Thread {
 	
@@ -15,9 +17,10 @@ public class ClientMessagesHandler extends Thread {
 	
 	private Socket client;
 	private ServerSession serverSession;
-	private ServerMainFrame serverMainFrame;
+	private ServerFrame serverMainFrame;
+	
 
-	public ClientMessagesHandler(ServerSession serverSession,Socket client,ServerMainFrame serverMainFrame){
+	public ClientMessagesHandler(ServerSession serverSession,Socket client,ServerFrame serverMainFrame){
 		setServerSession(serverSession);
 		setClient(client);
 		setServerMainFrame(serverMainFrame);
@@ -25,6 +28,7 @@ public class ClientMessagesHandler extends Thread {
 
 	public void run(){
 		serverMainFrame.getLogsTextArea().append("\n new client message handler ..");
+		MessageResponder messageResponder = new ClientMessageResponder(getServerSession(),this,getClient());
 		 while (true) {
 			 
 			 try {
@@ -76,7 +80,34 @@ public class ClientMessagesHandler extends Thread {
 
 		 }
 	}
+	
+	private void respond(String message){
+		if(message.startsWith("/user/")){
+			newUser(message);
+		}
+	}
 
+	public void newUser(String message){
+		String nickname = message.replace("/user/", "");
+		
+		if(getServerSession().clientsNumber() == 0){
+			
+			Integer id = getServerSession().clientsNumber() - 1;
+			Client client = new Client(id,nickname,getClient(),this);
+			getServerSession().addClient(client);
+			getServerSession().frameLog(client.getId() + ": " + client.getNickname() + " joined chat ..");
+			
+		}else if(getServerSession().clientsNumber() == 1){
+			
+			if(!getServerSession().searchClients(nickname)){
+				
+				Integer id = getServerSession().clientsNumber() - 1;
+				Client client = new Client(id,nickname,getClient(),this);
+				getServerSession().addClient(client);
+				getServerSession().frameLog(client.getId() + ": " + client.getNickname() + " joined chat ..");
+			}
+		}
+	}
 	
 	/*** Getters & Setters ***/
 	public Logger getLogger() {
@@ -92,11 +123,11 @@ public class ClientMessagesHandler extends Thread {
 		this.client = client;
 	}
 
-	public ServerMainFrame getServerMainFrame() {
+	public ServerFrame getServerMainFrame() {
 		return serverMainFrame;
 	}
 
-	public void setServerMainFrame(ServerMainFrame serverMainFrame) {
+	public void setServerMainFrame(ServerFrame serverMainFrame) {
 		this.serverMainFrame = serverMainFrame;
 	}
 
@@ -107,4 +138,6 @@ public class ClientMessagesHandler extends Thread {
 	public void setServerSession(ServerSession serverSession) {
 		this.serverSession = serverSession;
 	}
+
+
 }

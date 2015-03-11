@@ -7,6 +7,8 @@ import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
+import com.hatemcode.chatter.responder.MessageResponder;
+import com.hatemcode.chatter.responder.imp.ServerMessageResponder;
 import com.muscatsd.chatter.client.frame.ClientMainFrame;
 
 /**
@@ -19,11 +21,16 @@ public class ServerMessagesHandler extends Thread {
 	
 	private Socket client;
 	private ClientMainFrame clientMainFrame;
+	private MessageResponder messageResponder;
 
+	public ServerMessagesHandler(){
+		setMessageResponder(new ServerMessageResponder());
 
+	}
 
 	public void run(){
 		handleMessages();
+
 	}
 	
 	/**
@@ -92,5 +99,14 @@ public class ServerMessagesHandler extends Thread {
 	public void setClientMainFrame(ClientMainFrame clientMainFrame) {
 		this.clientMainFrame = clientMainFrame;
 	}
+
+	public MessageResponder getMessageResponder() {
+		return messageResponder;
+	}
+
+	public void setMessageResponder(MessageResponder messageResponder) {
+		this.messageResponder = messageResponder;
+	}
+
 
 }

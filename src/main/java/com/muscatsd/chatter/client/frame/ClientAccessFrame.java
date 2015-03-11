@@ -9,7 +9,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.util.logging.Logger;
 
@@ -99,20 +98,25 @@ public class ClientAccessFrame extends JFrame implements ActionListener {
 
 	
 	public void showFrame(){
+		getNicknameText().setFocusable(true);
 		setVisible(true);
 	}
-
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
 		if(e.getSource() == enterChatButton){
 			enterChat();
 		}
-		
+
 	}
 	
 	public void enterChat(){
+		
 		setServerHost(getServerHostText().getText());
+		setServerPort(Integer.parseInt(getServerPortText().getText()));
+		setNickname(getNicknameText().getText());
+		
 		 Runnable run = new Runnable() {
 			    public void run() {
 					try {

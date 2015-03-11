@@ -19,15 +19,19 @@ import com.muscatsd.chatter.server.Server;
 import com.muscatsd.chatter.server.enumeration.ServerStatus;
 
 @SuppressWarnings("serial")
-public class ServerMainFrame extends JFrame implements Runnable,ActionListener {
+public class ServerFrame extends JFrame implements Runnable,ActionListener {
 	
+	// logger
 	private final Logger logger = Logger.getLogger(getClass().getName());
 	
+	// server object
 	private Server server;
 	
+	// frame specifications
 	private final String frameTitle = "Chatter Server";
 	private final Dimension frameSize = new Dimension(500,400);
 	
+	// frame controllers
 	private JPanel mainPanel = new JPanel();
 	private JLabel serverStatusLabel = new JLabel();
 	private JLabel serverNameLabel = new JLabel("Server Name:");
@@ -37,12 +41,12 @@ public class ServerMainFrame extends JFrame implements Runnable,ActionListener {
 	private JButton statusToggleButton = new JButton();
 	private JTextArea logsTextArea = new JTextArea();
 	
-	public ServerMainFrame(){
+	public ServerFrame(){
 		constructFrame();
 		constructControllers();
 	}
 	
-	public ServerMainFrame(Server server){
+	public ServerFrame(Server server){
 		setServer(server);
 		constructFrame();
 		constructControllers();
@@ -50,41 +54,75 @@ public class ServerMainFrame extends JFrame implements Runnable,ActionListener {
 	
 	@Override
 	public void run() {
-		refreshFillControls();
+		refreshControllersBasedOnStatus();
 		constructListners();
 		showFrame();
 	}
 	
-	public void constructFrame(){
+	/**
+	 * Build the frame.
+	 */
+	private void constructFrame(){
+		
+		// set frame title
 		setTitle(getFrameTitle());
+		
+		// set frame size
 		setSize(getFrameSize());
+		
+		// make it not resizable
 		setResizable(false);
+		
+		// make the frame on center
 		setLocationRelativeTo(null);
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
-	public void constructControllers(){
+	/**
+	 * Build frame controllers.
+	 */
+	private void constructControllers(){
+		
+		// set main panel layout
 		getMainPanel().setLayout(new FlowLayout());
 		
+		// server status
 		getMainPanel().add(getServerStatusLabel());
 		
+		// server name
 		getMainPanel().add(getServerNameLabel());
 		getMainPanel().add(getServerNameText());
 		
+		// server port
 		getMainPanel().add(getServerPortLabel());
 		getMainPanel().add(getServerPortText());
 		
+		// server status toggle button
 		getMainPanel().add(getStatusToggleButton());
 		
+		// server logs
 		getLogsTextArea().setColumns(40);
 		getLogsTextArea().setRows(20);
 		getMainPanel().add(new JScrollPane(getLogsTextArea()));
 		
+		// add main panel to the frame
 		add(getMainPanel());
 	}
+
+	/**
+	 * Add listeners to the frame controllers. 
+	 */
+	private void constructListners(){
+		
+		// status toggle button
+		getStatusToggleButton().addActionListener(this);
+	}
 	
-	public void refreshFillControls(){
+	/**
+	 * Refresh controllers based on server status.
+	 */
+	public void refreshControllersBasedOnStatus(){
 		
 		if(server.getServerStatus() == ServerStatus.STOPPED){
 			
@@ -104,54 +142,67 @@ public class ServerMainFrame extends JFrame implements Runnable,ActionListener {
 
 	}
 	
-	public void constructListners(){
 
-		getStatusToggleButton().addActionListener(this);
-	}
-
+	/**
+	 * Action listener manager.
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
+		// on click status toggle button
 		if(e.getSource() == statusToggleButton){
-			StatusToggleButtonToggled();
+			toggleStatus();
 		}
 		
 	}
 	
-	public void StatusToggleButtonToggled(){
+	/**
+	 * Toggle status.
+	 */
+	public void toggleStatus(){
 		
+		// if server is stopped start it
 		if(server.getServerStatus() == ServerStatus.STOPPED){
 			startServer();	
-			
+		
+		// if server is started stop it
 		}else if(server.getServerStatus() == ServerStatus.STARTED){
 			stopServer();
 
 		}
 		
 	}
-	
-	public void startServer(){
 
+	/**
+	 * Start server.
+	 */
+	public void startServer(){
 		
-		getServer().setServerName(getServerNameText().getText());
-		getServer().setServerPort(Integer.parseInt(getServerPortText().getText()));
+		String serverName = getServerNameText().getText();
+		getServer().setServerName(serverName);
 		
+		Integer serverPort = Integer.parseInt(getServerPortText().getText());
+		getServer().setServerPort(serverPort);
+		
+		// if server started
 		if(getServer().start()){
 			getStatusToggleButton().setText("Stop");
 			
 			getServerNameText().setEnabled(false);
-			getServerPortText().setEnabled(false);
-			
-			
+			getServerPortText().setEnabled(false);		
 					
 		}
-		refreshFillControls();	
+		
+		refreshControllersBasedOnStatus();
 
 	}
-	
-	public void stopServer(){
 
+	/**
+	 * Stop server.
+	 */
+	public void stopServer(){
 		
+		// if server stopped
 		if(getServer().stop()){
 	
 			getStatusToggleButton().setText("Start");
@@ -162,13 +213,18 @@ public class ServerMainFrame extends JFrame implements Runnable,ActionListener {
 			getLogsTextArea().append("\n Server stopped ..");
 			
 		}
-		refreshFillControls();
+		
+		refreshControllersBasedOnStatus();
 	}
 	
+	/**
+	 * Show frame.
+	 */
 	public void showFrame(){
 		setVisible(true);
 	}
 
+	/*** Getters & Setters ***/
 	public String getFrameTitle() {
 		return frameTitle;
 	}

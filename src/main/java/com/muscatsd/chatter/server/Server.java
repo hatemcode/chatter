@@ -4,13 +4,12 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
-import java.net.SocketAddress;
 import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
 import com.muscatsd.chatter.server.enumeration.ServerStatus;
-import com.muscatsd.chatter.server.frame.ServerMainFrame;
+import com.muscatsd.chatter.server.frame.ServerFrame;
 
 /**
  * Represent the server application.
@@ -28,7 +27,7 @@ public class Server {
 	private ServerSession serverSession;
 	
 	// server frame
-	private ServerMainFrame serverMainFrame = new ServerMainFrame() ;
+	private ServerFrame serverFrame;
 	
 	// constants
 	private final String DEFAULT_SERVER_NAME = "Chatter";
@@ -42,6 +41,7 @@ public class Server {
 		
 		setServerName(DEFAULT_SERVER_NAME);
 		setServerPort(DEFAULT_SERVER_PORT);
+		setServerFrame(new ServerFrame(this));
 	}
 	
 	/**
@@ -53,6 +53,7 @@ public class Server {
 		
 		setServerName(serverName);
 		setServerPort(serverPort);
+		setServerFrame(new ServerFrame(this));
 
 	}
 	
@@ -61,8 +62,7 @@ public class Server {
 	 */
 	public static void main(String[] args) {
 		Server server = new Server();
-		server.getServerMainFrame().setServer(server);
-		server.getServerMainFrame().run();
+		server.getServerFrame().run();
 
 	}
 	
@@ -81,7 +81,7 @@ public class Server {
 			ServerSession serverSession = new ServerSession();
 			setServerSession(serverSession);
 			getServerSession().setServerSocket(getSocket());
-			getServerSession().setServerMainFrame(getServerMainFrame());
+			getServerSession().setServerFrame(getServerFrame());
 			getServerSession().start();
 			
 			// change server status to started
@@ -150,12 +150,12 @@ public class Server {
 		this.serverPort = serverPort;
 	}
 
-	public ServerMainFrame getServerMainFrame() {
-		return serverMainFrame;
+	public ServerFrame getServerFrame() {
+		return serverFrame;
 	}
 
-	public void setServerMainFrame(ServerMainFrame serverMainFrame) {
-		this.serverMainFrame = serverMainFrame;
+	public void setServerFrame(ServerFrame serverFrame) {
+		this.serverFrame = serverFrame;
 	}
 
 	public ServerStatus getServerStatus() {

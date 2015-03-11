@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
-import com.muscatsd.chatter.server.frame.ServerMainFrame;
+import com.muscatsd.chatter.server.frame.ServerFrame;
 
 /**
  * Represent the server in working mode.
@@ -25,7 +25,9 @@ public class ServerSession extends Thread {
 	
 	private ServerSocket serverSocket;
 	private List<Client> clients = new ArrayList<Client>();
-	private ServerMainFrame serverMainFrame;
+	
+	// server frame
+	private ServerFrame serverFrame;
 	
 
 	/**
@@ -50,7 +52,7 @@ public class ServerSession extends Thread {
 	 */
 	public void handlingClients(){
 		
-		serverMainFrame.getLogsTextArea().append("\n Handling clients ..");
+		frameLog("\n Handling clients ..");
 		
 		// keep searching about clients
 		while (true) {
@@ -61,22 +63,22 @@ public class ServerSession extends Thread {
 					
 					// accept new client
 					Socket clientSocket = getServerSocket().accept();
-					serverMainFrame.getLogsTextArea().append("\n new client joned ..");
+					frameLog("\n new client joned ..");
 					
 					// establish message handler for the new client
-					ClientMessagesHandler messagesHandler = new ClientMessagesHandler(this,clientSocket,serverMainFrame);
+					ClientMessagesHandler messagesHandler = new ClientMessagesHandler(this,clientSocket,serverFrame);
 					messagesHandler.start();
-					serverMainFrame.getLogsTextArea().append("\n new client message handler ..");
+					frameLog("\n new client message handler ..");
 					
 				}else{
 					
 					// if server socket is closed stop handling clients
-					serverMainFrame.getLogsTextArea().append("\n Server session is closed ..");
+					frameLog("\n Server session is closed ..");
 					break;
 				}
 				
 			} catch (IOException e) {
-				serverMainFrame.getLogsTextArea().append("\n " + e.getMessage());
+				frameLog("\n " + e.getMessage());
 			}
          }
 	}
@@ -122,6 +124,10 @@ public class ServerSession extends Thread {
 		}
 		
 		return false;
+	}
+	
+	public void addClient(Client client){
+		getClients().add(client);
 	}
 	
 	/**
@@ -175,7 +181,15 @@ public class ServerSession extends Thread {
 	 * @param message Log message
 	 */
 	public void frameLog(String message){
-		serverMainFrame.getLogsTextArea().append(message);
+		serverFrame.getLogsTextArea().append(message);
+	}
+	
+	/**
+	 * Get number of clients.
+	 * @return number of clients
+	 */
+	public Integer clientsNumber(){
+		return getClients().size();
 	}
 
 	/*** Getters & Setters ***/
@@ -191,12 +205,12 @@ public class ServerSession extends Thread {
 		this.serverSocket = serverSocket;
 	}
 
-	public ServerMainFrame getServerMainFrame() {
-		return serverMainFrame;
+	public ServerFrame getServerFrame() {
+		return serverFrame;
 	}
 
-	public void setServerMainFrame(ServerMainFrame serverMainFrame) {
-		this.serverMainFrame = serverMainFrame;
+	public void setServerFrame(ServerFrame serverFrame) {
+		this.serverFrame = serverFrame;
 	}
 
 	public List<Client> getClients() {
