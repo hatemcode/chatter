@@ -28,14 +28,16 @@ public class Client {
 	}
 	
 	public void sendMessage(String message){
-		OutputStream messageTosend;
-		try {
-			messageTosend = getSocket().getOutputStream();
-			DataOutputStream out = new DataOutputStream(messageTosend);
-			out.writeUTF(message);
-		} catch (IOException e) {
-
-			e.printStackTrace();
+		if(!getSocket().isClosed()){
+			OutputStream messageTosend;
+			try {
+				messageTosend = getSocket().getOutputStream();
+				DataOutputStream out = new DataOutputStream(messageTosend);
+				out.writeUTF(message);
+			} catch (IOException e) {
+	
+				e.printStackTrace();
+			}
 		}
 	}
 	

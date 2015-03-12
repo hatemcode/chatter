@@ -173,7 +173,21 @@ public class ServerSession extends Thread {
 	}
 	
 	public void removeClient(String nickname){
-		
+		for(Client client : getClients()){
+			if(client.getNickname().equals(nickname)){
+				try {
+					getClients().remove(client.getId().intValue());
+					broadcast("\n" + nickname + " leaves chat.");
+					broadcastList();
+					client.getClientMessagesHandler().getClient().close();
+					break;
+					
+				} catch (IOException e) {
+					
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	/**

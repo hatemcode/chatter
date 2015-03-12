@@ -40,7 +40,7 @@ public class ClientMessagesHandler extends Thread {
 					if(message.startsWith("/user/")){
 						String[] command = message.split(" ");
 						if(getServerSession().getClients().size() == 0){
-							getServerSession().getClients().add(new Client(getServerSession().getClients().size()-1,command[1],client,this));
+							getServerSession().getClients().add(new Client(0,command[1],client,this));
 							serverMainFrame.getLogsTextArea().append("\n user with nickname: " + command[1] + " joined chat ..");
 							
 							OutputStream response = getClient().getOutputStream();
@@ -50,7 +50,7 @@ public class ClientMessagesHandler extends Thread {
 							getServerSession().broadcast(command[1] + " joied chat\n");
 						}else{
 							if(!getServerSession().searchClients(command[1])){
-								getServerSession().getClients().add(new Client(getServerSession().getClients().size()-1,command[1],client,this));
+								getServerSession().getClients().add(new Client(getServerSession().getClients().size(),command[1],client,this));
 								serverMainFrame.getLogsTextArea().append("\n user with nickname: " + command[1] + " joined chat ..");
 								
 								OutputStream response = getClient().getOutputStream();
@@ -66,6 +66,10 @@ public class ClientMessagesHandler extends Thread {
 						}
 					}else if(message.startsWith("/message/")){
 						getServerSession().broadcast(message);
+					}else if(message.startsWith("/leave/")){
+						String nickname = message.replace("/leave/", "");
+						getServerSession().removeClient(nickname);
+				
 					}else{
 						serverMainFrame.getLogsTextArea().append("\n " + message);
 					}

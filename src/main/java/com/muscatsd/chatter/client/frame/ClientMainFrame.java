@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -18,7 +20,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 @SuppressWarnings("serial")
-public class ClientMainFrame extends JFrame implements ActionListener {
+public class ClientMainFrame extends JFrame implements ActionListener,WindowListener {
 
 	private final Logger logger = Logger.getLogger(getClass().getName());
 
@@ -77,7 +79,7 @@ public class ClientMainFrame extends JFrame implements ActionListener {
 	}
 	
 	public void constructListners(){
-
+		addWindowListener(this);
 		getSendButton().addActionListener(this);
 	}
 	
@@ -108,6 +110,59 @@ public class ClientMainFrame extends JFrame implements ActionListener {
 
 			e.printStackTrace();
 		}	
+	}
+	
+	public void sendMessage(String message){
+		OutputStream broadcast;
+		try {
+			broadcast = getClient().getOutputStream();
+			DataOutputStream out = new DataOutputStream(broadcast);
+			out.writeUTF(message);
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}	
+	}
+
+	@Override
+	public void windowActivated(WindowEvent arg0) {
+		
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent arg0) {
+		
+	}
+
+	@Override
+	public void windowClosing(WindowEvent arg0) {
+		sendMessage("/leave/" + getNickname());	
+		
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowOpened(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	public Dimension getFrameSize() {
@@ -177,7 +232,6 @@ public class ClientMainFrame extends JFrame implements ActionListener {
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
-
 
 
 }
