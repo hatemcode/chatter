@@ -137,9 +137,7 @@ public class ClientAccessFrame extends JFrame implements ActionListener {
 							JOptionPane.showMessageDialog(null, "Nickname is exist", "Error",JOptionPane.ERROR_MESSAGE);
 						}else if(command.startsWith("/user accepted/")){
 							
-							ClientFrame clientFrame = new ClientFrame();
-							clientFrame.setClient(getSocket());
-							clientFrame.setNickname(getNicknameText().getText());
+							ClientFrame clientFrame = new ClientFrame(getSocket(),getNicknameText().getText());
 							clientFrame.showFrame();
 							ServerMessagesHandler serverMessagesHandler = new ServerMessagesHandler();
 							serverMessagesHandler.setClient(getSocket());

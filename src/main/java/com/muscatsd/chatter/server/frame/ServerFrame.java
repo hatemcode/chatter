@@ -63,7 +63,7 @@ public class ServerFrame extends JFrame implements Runnable,ActionListener {
 	 * Build the frame.
 	 */
 	private void constructFrame(){
-		
+
 		// set frame title
 		setTitle(getFrameTitle());
 		

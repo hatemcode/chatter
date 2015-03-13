@@ -106,7 +106,7 @@ public class ServerMessagesHandler extends Thread {
 	 */
 	public void publicMessageReceived(String message){
 		
-		message = message.replace("/message","");
+		message = message.replace("/message/","");
 		getClientFrame().getPublicChatTextArea().append("\n" + message);
 
 	}
@@ -118,7 +118,6 @@ public class ServerMessagesHandler extends Thread {
 	 */
 	public void publicAnnouncementReceived(String message){
 		
-		message = message.replace("/","");
 		getClientFrame().getPublicChatTextArea().append("\n" + message);
 
 	}

@@ -8,6 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -24,7 +25,8 @@ public class ServerSession extends Thread {
 	private final Logger logger = Logger.getLogger(getClass().getName());
 	
 	private ServerSocket serverSocket;
-	private List<Client> clients = new ArrayList<Client>();
+	//private List<Client> clients = new ArrayList<Client>();
+	private HashMap<Integer, Client> clients = new HashMap<Integer,Client>();
 	
 	// server frame
 	private ServerFrame serverFrame;
@@ -79,7 +81,7 @@ public class ServerSession extends Thread {
 		
 		Integer index = -1;
 
-		for(Client client :getClients()){
+		for(Client client :getClients().values()){
 			index++;
 			// send message to client to notify him about closing the session
 			sendMessage(client, "/stopped/");			
@@ -89,7 +91,7 @@ public class ServerSession extends Thread {
 				client.getSocket().close();
 				
 				// remove client
-				getClients().remove(index);	
+				getClients().remove(client.getId());	
 
 
 			} catch (IOException e) {
@@ -110,7 +112,7 @@ public class ServerSession extends Thread {
 	 */
 	public Boolean clientIsExist(String nickname){
 		
-		for(Client client : getClients()){
+		for(Client client : getClients().values()){
 			if(client.getNickname().equals(nickname)){
 				return true;
 			}
@@ -126,7 +128,7 @@ public class ServerSession extends Thread {
 	 */
 	public Client searchClients(String nickname){
 		
-		for(Client client : getClients()){
+		for(Client client : getClients().values()){
 			if(client.getNickname().equals(nickname)){
 				return client;
 			}
@@ -140,7 +142,7 @@ public class ServerSession extends Thread {
 	 * @param client
 	 */
 	public void addClient(Client client){
-		getClients().add(client);
+		getClients().put(client.getId(),client);
 		getServerFrame().logToFrame("New client(" + client.getId() + "): " + client.getNickname() + " joined: " + getClients().size());
 		getServerFrame().logToFrame("Connected clients number: " + getClients().size());
 
@@ -222,7 +224,7 @@ public class ServerSession extends Thread {
 	 */
 	public void broadcast(String message){
 		
-		for(Client client : getClients()){			
+		for(Client client : getClients().values()){			
 			sendMessage(client,message);			
 		}
 	}
@@ -234,7 +236,7 @@ public class ServerSession extends Thread {
 		String message = "/list:";
 		Integer counter = 0;
 		
-		for(Client client : getClients()){
+		for(Client client : getClients().values()){
 			counter++;
 			
 			if(counter == 1){
@@ -277,11 +279,12 @@ public class ServerSession extends Thread {
 		this.serverFrame = serverFrame;
 	}
 
-	public List<Client> getClients() {
+	public HashMap<Integer, Client> getClients() {
 		return clients;
 	}
 
-	public void setClients(List<Client> clients) {
+	public void setClients(HashMap<Integer, Client> clients) {
 		this.clients = clients;
 	}
+
 }
