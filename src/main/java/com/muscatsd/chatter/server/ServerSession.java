@@ -141,7 +141,8 @@ public class ServerSession extends Thread {
 	 */
 	public void addClient(Client client){
 		getClients().add(client);
-		getServerFrame().logToFrame("Clients number: " + getClients().size());
+		getServerFrame().logToFrame("New client(" + client.getId() + "): " + client.getNickname() + " joined: " + getClients().size());
+		getServerFrame().logToFrame("Connected clients number: " + getClients().size());
 
 	}
 
@@ -158,7 +159,7 @@ public class ServerSession extends Thread {
 			getClients().remove(client.getId().intValue());
 			
 			getServerFrame().logToFrame("Client(" + client.getId() + "): " + client.getNickname() + " leaves");
-			getServerFrame().logToFrame("Clients number: " + getClients().size());
+			getServerFrame().logToFrame("Connected clients number: " + getClients().size());
 			// announce about client leaving
 			broadcast("\n" + nickname + " leaves chat.");
 			

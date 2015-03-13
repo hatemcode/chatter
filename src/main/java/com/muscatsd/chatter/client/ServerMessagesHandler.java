@@ -39,31 +39,31 @@ public class ServerMessagesHandler extends Thread {
 	public void handleMessages(){
 		
 		// keep search about incoming messages
-		while(true){
+		while(!getClient().isClosed()){
 			
 			// search about messages if socket is alive
 			if(!getClient().isClosed()){
-				DataInputStream in;
+				DataInputStream inputStream;
 				try {
 					
-					in = new DataInputStream(client.getInputStream());
-					String message = in.readUTF();
+					inputStream = new DataInputStream(getClient().getInputStream());
+					String message = inputStream.readUTF();
 					
 					if(!message.startsWith("/")){
-						clientFrame.getPublicChatTextArea().append(message);
+						
+						publicAnnouncementReceived(message);
+						
 					}else if(message.startsWith("/message/")){
-						String[] command = message.split("/");
-						clientFrame.getPublicChatTextArea().append("\n" + command[2]);
-	
+						
+						publicMessageReceived(message);
+
 					}else if(message.startsWith("/list")){
-						String[] command = message.split(":");
-						String[] users = command[1].split(",");
-						getClientFrame().getClientsList().setListData(users);
-						getClientFrame().getClientsList().setVisibleRowCount(getClientFrame().getClientsList().getVisibleRowCount() -1);
+						
+						listReceived(message);
+						
 					}else if(message.startsWith("/stopped/")){
-						JOptionPane.showMessageDialog(null, "Server is stopped !", "Error",JOptionPane.WARNING_MESSAGE);
-						getClientFrame().closeFrame();
-	
+						
+						serverStopped(message);
 					}
 					
 					
@@ -78,7 +78,50 @@ public class ServerMessagesHandler extends Thread {
 			}
 		}		
 	}
+	
+	/**
+	 * When server is stopped.
+	 * @param message
+	 */
+	public void serverStopped(String message){
+		JOptionPane.showMessageDialog(null, "Server is stopped !", "Warning",JOptionPane.WARNING_MESSAGE);
+		getClientFrame().closeFrame();
+	}
+	
+	/**
+	 * When serve sending the clients list.
+	 * @param message
+	 */
+	public void listReceived(String message){
+		
+		String clients = message.replace("/list:","");
+		String[] clientsArray = clients.split(",");
+		getClientFrame().getClientsList().setListData(clientsArray);
+		getClientFrame().getClientsList().setVisibleRowCount(getClientFrame().getClientsList().getVisibleRowCount() -1);		
+	}
 
+	/**
+	 * When public message is received.
+	 * @param message
+	 */
+	public void publicMessageReceived(String message){
+		
+		message = message.replace("/message","");
+		getClientFrame().getPublicChatTextArea().append("\n" + message);
+
+	}
+	
+
+	/**
+	 * When public announcement is received.
+	 * @param message
+	 */
+	public void publicAnnouncementReceived(String message){
+		
+		message = message.replace("/","");
+		getClientFrame().getPublicChatTextArea().append("\n" + message);
+
+	}
 	public Logger getLogger() {
 		return logger;
 	}
