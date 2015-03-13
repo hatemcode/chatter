@@ -27,19 +27,7 @@ public class Client {
 		setClientMessagesHandler(clientMessagesHandler);
 	}
 	
-	public void sendMessage(String message){
-		if(!getSocket().isClosed()){
-			OutputStream messageTosend;
-			try {
-				messageTosend = getSocket().getOutputStream();
-				DataOutputStream out = new DataOutputStream(messageTosend);
-				out.writeUTF(message);
-			} catch (IOException e) {
-	
-				e.printStackTrace();
-			}
-		}
-	}
+
 	
 	/*** Getters & Setters ***/
 	public String getNickname() {

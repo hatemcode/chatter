@@ -31,11 +31,11 @@ public class ClientMessageResponder implements MessageResponder {
 		String nickname = getMessage().replace("/user/", "");
 		
 		// if nickname is not exist
-		if(!getServerSession().searchClients(nickname)){
+		if(!getServerSession().clientIsExist(nickname)){
 			
 			Integer id = getServerSession().getClients().size() - 1;
 			Client client = new Client(id,nickname,getSocket(),getClientMessageHandler());
-			client.sendMessage("/user accepted/");
+			getServerSession().sendMessage(client,"/user accepted/");
 			
 		}else{
 			

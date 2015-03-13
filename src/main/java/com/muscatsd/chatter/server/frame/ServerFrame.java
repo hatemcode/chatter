@@ -126,11 +126,18 @@ public class ServerFrame extends JFrame implements Runnable,ActionListener {
 		
 		if(server.getServerStatus() == ServerStatus.STOPPED){
 			
+			// enable fields of server name and port
+			getServerNameText().setEnabled(true);
+			getServerPortText().setEnabled(true);
+			
 			getServerStatusLabel().setForeground(Color.RED);
 			getServerStatusLabel().setText("Server is Stopped");
 			getStatusToggleButton().setText("Start");
 			
 		}else if(server.getServerStatus() == ServerStatus.STARTED){
+			
+			getServerNameText().setEnabled(false);
+			getServerPortText().setEnabled(false);
 			
 			getServerStatusLabel().setForeground(Color.GREEN);
 			getServerStatusLabel().setText("Server is Started");
@@ -186,14 +193,9 @@ public class ServerFrame extends JFrame implements Runnable,ActionListener {
 		
 		// if server started
 		if(getServer().start()){
-			getStatusToggleButton().setText("Stop");
-			
-			getServerNameText().setEnabled(false);
-			getServerPortText().setEnabled(false);		
-					
-		}
-		
-		refreshControllersBasedOnStatus();
+			logToFrame("Server ("+ getServerNameText().getText() +") is started ..");
+			refreshControllersBasedOnStatus();		
+		}	
 
 	}
 
@@ -204,23 +206,27 @@ public class ServerFrame extends JFrame implements Runnable,ActionListener {
 		
 		// if server stopped
 		if(getServer().stop()){
-	
-			getStatusToggleButton().setText("Start");
 			
-			getServerNameText().setEnabled(true);
-			getServerPortText().setEnabled(true);
-			
-			getLogsTextArea().append("\n Server stopped ..");
-			
+			refreshControllersBasedOnStatus();			
 		}
 		
-		refreshControllersBasedOnStatus();
+		
+	}
+	
+	/**
+	 * Log to the frame.
+	 * @param message
+	 */
+	public void logToFrame(String message){
+		getLogsTextArea().append("\n" + message);
 	}
 	
 	/**
 	 * Show frame.
 	 */
 	public void showFrame(){
+		
+		// make it visible
 		setVisible(true);
 	}
 
@@ -308,9 +314,6 @@ public class ServerFrame extends JFrame implements Runnable,ActionListener {
 	public void setLogsTextArea(JTextArea logsTextArea) {
 		this.logsTextArea = logsTextArea;
 	}
-
-
-
 
 
 }

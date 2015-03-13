@@ -7,6 +7,8 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.logging.Logger;
 
+import javax.swing.JOptionPane;
+
 import com.hatemcode.chatter.responder.MessageResponder;
 import com.hatemcode.chatter.responder.imp.ClientMessageResponder;
 import com.muscatsd.chatter.server.frame.ServerFrame;
@@ -17,61 +19,41 @@ public class ClientMessagesHandler extends Thread {
 	
 	private Socket client;
 	private ServerSession serverSession;
-	private ServerFrame serverMainFrame;
+	private ServerFrame serverFrame;
 	
 
-	public ClientMessagesHandler(ServerSession serverSession,Socket client,ServerFrame serverMainFrame){
+	public ClientMessagesHandler(ServerSession serverSession,Socket client,ServerFrame serverFrame){
 		setServerSession(serverSession);
 		setClient(client);
-		setServerMainFrame(serverMainFrame);
+		setServerFrame(serverFrame);
 	}
 
 	public void run(){
-		serverMainFrame.getLogsTextArea().append("\n new client message handler ..");
-		MessageResponder messageResponder = new ClientMessageResponder(getServerSession(),this,getClient());
+		
+		getServerFrame().logToFrame("new client message handler ..");
+		
 		 while (true) {
 			 
 			 try {
 				if(!getClient().isClosed()){ 
-					DataInputStream in = new DataInputStream(client.getInputStream());
-					String message = in.readUTF();
-					serverMainFrame.getLogsTextArea().append("\n " + message);
+					
+					DataInputStream inputStream = new DataInputStream(getClient().getInputStream());
+					String message = inputStream.readUTF();
 					
 					if(message.startsWith("/user/")){
-						String[] command = message.split(" ");
-						if(getServerSession().getClients().size() == 0){
-							getServerSession().getClients().add(new Client(0,command[1],client,this));
-							serverMainFrame.getLogsTextArea().append("\n user with nickname: " + command[1] + " joined chat ..");
-							
-							OutputStream response = getClient().getOutputStream();
-							DataOutputStream out = new DataOutputStream(response);
-							out.writeUTF("/user accepted/");
-							getServerSession().broadcastList();
-							getServerSession().broadcast(command[1] + " joied chat\n");
-						}else{
-							if(!getServerSession().searchClients(command[1])){
-								getServerSession().getClients().add(new Client(getServerSession().getClients().size(),command[1],client,this));
-								serverMainFrame.getLogsTextArea().append("\n user with nickname: " + command[1] + " joined chat ..");
-								
-								OutputStream response = getClient().getOutputStream();
-								DataOutputStream out = new DataOutputStream(response);
-								out.writeUTF("/user accepted/");
-								getServerSession().broadcastList();
-								getServerSession().broadcast(command[1] + " joied chat\n");
-							}else{
-								OutputStream response = getClient().getOutputStream();
-								DataOutputStream out = new DataOutputStream(response);
-								out.writeUTF("/user rejected/");
-							}
-						}
+						
+						newUser(message);
+						
 					}else if(message.startsWith("/message/")){
-						getServerSession().broadcast(message);
+						
+						publicMessage(message);
+						
 					}else if(message.startsWith("/leave/")){
-						String nickname = message.replace("/leave/", "");
-						getServerSession().removeClient(nickname);
-				
+						
+						leaveChat(message);
+						
 					}else{
-						serverMainFrame.getLogsTextArea().append("\n " + message);
+						getServerFrame().logToFrame(message);
 					}
 				}else{
 					
@@ -79,39 +61,52 @@ public class ClientMessagesHandler extends Thread {
 				}
 				
 			} catch (IOException e) {
-				
+				JOptionPane.showMessageDialog(null, e.getMessage() , "Error",JOptionPane.ERROR_MESSAGE); e.printStackTrace();
+
+
 			}
 
 		 }
 	}
 	
-	private void respond(String message){
-		if(message.startsWith("/user/")){
-			newUser(message);
-		}
-	}
-
+	/**
+	 * New user.
+	 * @param message incoming message from client
+	 */
 	public void newUser(String message){
 		String nickname = message.replace("/user/", "");
 		
-		if(getServerSession().clientsNumber() == 0){
+		if(!getServerSession().clientIsExist(nickname)){
 			
-			Integer id = getServerSession().clientsNumber() - 1;
+			Integer id = getServerSession().getClients().size();
 			Client client = new Client(id,nickname,getClient(),this);
 			getServerSession().addClient(client);
-			getServerSession().frameLog(client.getId() + ": " + client.getNickname() + " joined chat ..");
 			
-		}else if(getServerSession().clientsNumber() == 1){
+			getServerSession().sendMessage(getClient(),"/user accepted/");
+			getServerSession().broadcastList();
+			getServerSession().broadcast(nickname + " joined chat\n");
 			
-			if(!getServerSession().searchClients(nickname)){
-				
-				Integer id = getServerSession().clientsNumber() - 1;
-				Client client = new Client(id,nickname,getClient(),this);
-				getServerSession().addClient(client);
-				getServerSession().frameLog(client.getId() + ": " + client.getNickname() + " joined chat ..");
-			}
+		}else{
+			getServerSession().sendMessage(getClient(), "/user rejected/");
 		}
 	}
+	
+	/**
+	 * Send public message.
+	 * @param message incoming message from client
+	 */
+	public void publicMessage(String message){
+		getServerSession().broadcast(message);
+	}
+	/**
+	 * Client leave chat.
+	 * @param message incoming message from client
+	 */
+	public void leaveChat(String message){
+		String nickname = message.replace("/leave/", "");
+		getServerSession().removeClient(nickname);
+	}
+	
 	
 	/*** Getters & Setters ***/
 	public Logger getLogger() {
@@ -127,12 +122,12 @@ public class ClientMessagesHandler extends Thread {
 		this.client = client;
 	}
 
-	public ServerFrame getServerMainFrame() {
-		return serverMainFrame;
+	public ServerFrame getServerFrame() {
+		return serverFrame;
 	}
 
-	public void setServerMainFrame(ServerFrame serverMainFrame) {
-		this.serverMainFrame = serverMainFrame;
+	public void setServerFrame(ServerFrame serverFrame) {
+		this.serverFrame = serverFrame;
 	}
 
 	public ServerSession getServerSession() {

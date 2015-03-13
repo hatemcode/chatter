@@ -126,7 +126,7 @@ public class ClientAccessFrame extends JFrame implements ActionListener {
 						OutputStream message = getSocket().getOutputStream();
 						DataOutputStream out = new DataOutputStream(message);
 						
-						out.writeUTF("/user/ " + getNicknameText().getText());
+						out.writeUTF("/user/" + getNicknameText().getText());
 						
 						InputStream response = getSocket().getInputStream();
 						DataInputStream in = new DataInputStream(response);
@@ -137,13 +137,13 @@ public class ClientAccessFrame extends JFrame implements ActionListener {
 							JOptionPane.showMessageDialog(null, "Nickname is exist", "Error",JOptionPane.ERROR_MESSAGE);
 						}else if(command.startsWith("/user accepted/")){
 							
-							ClientMainFrame clientMainFrame = new ClientMainFrame();
-							clientMainFrame.setClient(getSocket());
-							clientMainFrame.setNickname(getNicknameText().getText());
-							clientMainFrame.showFrame();
+							ClientFrame clientFrame = new ClientFrame();
+							clientFrame.setClient(getSocket());
+							clientFrame.setNickname(getNicknameText().getText());
+							clientFrame.showFrame();
 							ServerMessagesHandler serverMessagesHandler = new ServerMessagesHandler();
 							serverMessagesHandler.setClient(getSocket());
-							serverMessagesHandler.setClientMainFrame(clientMainFrame);
+							serverMessagesHandler.setClientFrame(clientFrame);
 							serverMessagesHandler.start();
 							dispose();
 							

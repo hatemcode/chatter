@@ -35,12 +35,12 @@ public class ServerSession extends Thread {
 	 */
 	public void run(){
 		
-		frameLog("\n Server session started ..");
+		getServerFrame().logToFrame("Server session is started ..");
 		try {
-			frameLog("\n Server Host/IP is: " + InetAddress.getLocalHost() + " " + getServerSocket().getInetAddress().toString());
+			getServerFrame().logToFrame("Server Host/IP is: " + InetAddress.getLocalHost());
 		} catch (UnknownHostException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage() , "Error",JOptionPane.ERROR_MESSAGE); e.printStackTrace();
 
-			e.printStackTrace();
 		}
 		
 		handlingClients();
@@ -52,34 +52,23 @@ public class ServerSession extends Thread {
 	 */
 	public void handlingClients(){
 		
-		frameLog("\n Handling clients ..");
+		getServerFrame().logToFrame("Handling clients ..");
 		
 		// keep searching about clients
-		while (true) {
-			 try {
+		while (!getServerSocket().isClosed()) {
+		 try {	
+				// accept new client
+				Socket clientSocket = getServerSocket().accept();
+				getServerFrame().logToFrame("new client joined ..");
 				
-				 // if server socket is not closed
-				if(!getServerSocket().isClosed()){
-					
-					// accept new client
-					Socket clientSocket = getServerSocket().accept();
-					frameLog("\n new client joned ..");
-					
-					// establish message handler for the new client
-					ClientMessagesHandler messagesHandler = new ClientMessagesHandler(this,clientSocket,serverFrame);
-					messagesHandler.start();
-					frameLog("\n new client message handler ..");
-					
-				}else{
-					
-					// if server socket is closed stop handling clients
-					frameLog("\n Server session is closed ..");
-					break;
-				}
-				
-			} catch (IOException e) {
-				frameLog("\n " + e.getMessage());
-			}
+				// establish message handler for the new client
+				ClientMessagesHandler messagesHandler = new ClientMessagesHandler(this,clientSocket,serverFrame);
+				messagesHandler.start();
+			
+			
+		} catch (IOException e) {
+			break;
+		}
          }
 	}
 	
@@ -93,29 +82,33 @@ public class ServerSession extends Thread {
 		for(Client client :getClients()){
 			index++;
 			// send message to client to notify him about closing the session
-			client.sendMessage("/stopped/");
-			
+			sendMessage(client, "/stopped/");			
 			
 			try {
 				// close client socket
 				client.getSocket().close();
 				
 				// remove client
-				getClients().remove(index);
+				getClients().remove(index);	
+
 
 			} catch (IOException e) {
-				JOptionPane.showMessageDialog(null, e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, e.getMessage() , "Error",JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+
 			}
 			
 		}
+		
+		getServerFrame().logToFrame("Server session is closed ..");
 	}
 
 	/**
-	 * Search clients.
+	 * Check if certain client is exist.
 	 * @param nickname Nickname
 	 * @return true if found , false if not
 	 */
-	public Boolean searchClients(String nickname){
+	public Boolean clientIsExist(String nickname){
 		
 		for(Client client : getClients()){
 			if(client.getNickname().equals(nickname)){
@@ -126,8 +119,100 @@ public class ServerSession extends Thread {
 		return false;
 	}
 	
+	/**
+	 * Search about certain client.
+	 * @param nickname client nickname
+	 * @return client object if found , null if not
+	 */
+	public Client searchClients(String nickname){
+		
+		for(Client client : getClients()){
+			if(client.getNickname().equals(nickname)){
+				return client;
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Add new client to server session.
+	 * @param client
+	 */
 	public void addClient(Client client){
 		getClients().add(client);
+		getServerFrame().logToFrame("Clients number: " + getClients().size());
+
+	}
+
+	/**
+	 * Remove client from server session.
+	 * @param nickname
+	 */
+	public void removeClient(String nickname){
+		
+		Client client = searchClients(nickname);
+		if(client != null)
+		{
+			// remove client from clients list
+			getClients().remove(client.getId().intValue());
+			
+			getServerFrame().logToFrame("Client(" + client.getId() + "): " + client.getNickname() + " leaves");
+			getServerFrame().logToFrame("Clients number: " + getClients().size());
+			// announce about client leaving
+			broadcast("\n" + nickname + " leaves chat.");
+			
+			// send the new updated client list
+			broadcastList();
+			
+			try {
+				// close client socket
+				client.getClientMessagesHandler().getClient().close();
+				
+			} catch (IOException e) {
+				
+				JOptionPane.showMessageDialog(null, e.getMessage() , "Error",JOptionPane.ERROR_MESSAGE); e.printStackTrace();
+
+
+			}			
+		}
+	}
+	
+	/**
+	 * Send message to specific client.
+	 * @param client
+	 * @param message
+	 */
+	public void sendMessage(Client client,String message){
+		OutputStream stream;
+		try {
+			stream = client.getSocket().getOutputStream();
+			DataOutputStream dataStream = new DataOutputStream(stream);
+			dataStream.writeUTF(message);
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage() , "Error",JOptionPane.ERROR_MESSAGE); e.printStackTrace();
+
+
+		}			
+	}
+	
+
+	/**
+	 * Send message to specific client socket.
+	 * @param socket client socket
+	 * @param message
+	 */
+	public void sendMessage(Socket socket,String message){
+		OutputStream stream;
+		try {
+			stream = socket.getOutputStream();
+			DataOutputStream dataStream = new DataOutputStream(stream);
+			dataStream.writeUTF(message);
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage() , "Error",JOptionPane.ERROR_MESSAGE); e.printStackTrace();
+
+
+		}			
 	}
 	
 	/**
@@ -136,19 +221,8 @@ public class ServerSession extends Thread {
 	 */
 	public void broadcast(String message){
 		
-		for(Client client : getClients()){
-			OutputStream broadcast;
-			try {
-				broadcast = client.getSocket().getOutputStream();
-				DataOutputStream out = new DataOutputStream(broadcast);
-				out.writeUTF(message);
-				
-			} catch (IOException e) {
-
-				JOptionPane.showMessageDialog(null, e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
-
-			}
-			
+		for(Client client : getClients()){			
+			sendMessage(client,message);			
 		}
 	}
 	
@@ -172,31 +246,6 @@ public class ServerSession extends Thread {
 		broadcast(message);
 	}
 	
-	public void removeClient(String nickname){
-		for(Client client : getClients()){
-			if(client.getNickname().equals(nickname)){
-				try {
-					getClients().remove(client.getId().intValue());
-					broadcast("\n" + nickname + " leaves chat.");
-					broadcastList();
-					client.getClientMessagesHandler().getClient().close();
-					break;
-					
-				} catch (IOException e) {
-					
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Log to server frame.
-	 * @param message Log message
-	 */
-	public void frameLog(String message){
-		serverFrame.getLogsTextArea().append(message);
-	}
 	
 	/**
 	 * Get number of clients.

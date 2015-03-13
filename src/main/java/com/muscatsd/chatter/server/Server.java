@@ -65,7 +65,8 @@ public class Server {
 		server.getServerFrame().run();
 
 	}
-	
+		
+
 	/**
 	 * Start server.
 	 * @return Boolean true if success.
@@ -111,22 +112,27 @@ public class Server {
 	 * @return Boolean if stop success
 	 */
 	public Boolean stop(){
+		if(!getSocket().isClosed()){
 		try {
-			if(!getSocket().isClosed()){
-				
-				// stop session and socket
-				getSocket().close();
-				getServerSession().stopSession();
-								
-				// change server status to stopped
-				setServerStatus(ServerStatus.STOPPED);
-				
-				// success server stop
-				return true;
+			
+			// stop session and socket
+			getServerSession().stopSession();
+			getSocket().close();
+			
+							
+			// change server status to stopped
+			setServerStatus(ServerStatus.STOPPED);
+			
+			getServerFrame().logToFrame("Server ("+ getServerName() +") is stopped ..\n");
+
+			// success server stop
+			return true;
+
+			
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(null, e.getMessage() , "Error",JOptionPane.ERROR_MESSAGE); e.printStackTrace();
 
 			}
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
 		}
 		
 		// fail server stop

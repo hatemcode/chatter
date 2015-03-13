@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 
 import com.hatemcode.chatter.responder.MessageResponder;
 import com.hatemcode.chatter.responder.imp.ServerMessageResponder;
-import com.muscatsd.chatter.client.frame.ClientMainFrame;
+import com.muscatsd.chatter.client.frame.ClientFrame;
 
 /**
  * Handler thread for messages coming from the server to specific client.
@@ -20,7 +20,7 @@ public class ServerMessagesHandler extends Thread {
 	private final Logger logger = Logger.getLogger(getClass().getName());
 	
 	private Socket client;
-	private ClientMainFrame clientMainFrame;
+	private ClientFrame clientFrame;
 	private MessageResponder messageResponder;
 
 	public ServerMessagesHandler(){
@@ -50,24 +50,25 @@ public class ServerMessagesHandler extends Thread {
 					String message = in.readUTF();
 					
 					if(!message.startsWith("/")){
-						clientMainFrame.getPublicChatTextArea().append(message);
+						clientFrame.getPublicChatTextArea().append(message);
 					}else if(message.startsWith("/message/")){
 						String[] command = message.split("/");
-						clientMainFrame.getPublicChatTextArea().append("\n" + command[2]);
+						clientFrame.getPublicChatTextArea().append("\n" + command[2]);
 	
 					}else if(message.startsWith("/list")){
 						String[] command = message.split(":");
 						String[] users = command[1].split(",");
-						getClientMainFrame().getClientsList().setListData(users);
-						getClientMainFrame().getClientsList().setVisibleRowCount(getClientMainFrame().getClientsList().getVisibleRowCount() -1);
+						getClientFrame().getClientsList().setListData(users);
+						getClientFrame().getClientsList().setVisibleRowCount(getClientFrame().getClientsList().getVisibleRowCount() -1);
 					}else if(message.startsWith("/stopped/")){
 						JOptionPane.showMessageDialog(null, "Server is stopped !", "Error",JOptionPane.WARNING_MESSAGE);
-						getClientMainFrame().closeFrame();
+						getClientFrame().closeFrame();
 	
 					}
 					
 					
 				} catch (IOException e) {
+					JOptionPane.showMessageDialog(null, e.getMessage() , "Error",JOptionPane.ERROR_MESSAGE); e.printStackTrace();
 	
 				}
 			}else{
@@ -92,12 +93,12 @@ public class ServerMessagesHandler extends Thread {
 		this.client = client;
 	}
 
-	public ClientMainFrame getClientMainFrame() {
-		return clientMainFrame;
+	public ClientFrame getClientFrame() {
+		return clientFrame;
 	}
 
-	public void setClientMainFrame(ClientMainFrame clientMainFrame) {
-		this.clientMainFrame = clientMainFrame;
+	public void setClientFrame(ClientFrame clientFrame) {
+		this.clientFrame = clientFrame;
 	}
 
 	public MessageResponder getMessageResponder() {
