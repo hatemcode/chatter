@@ -97,7 +97,8 @@ public class ServerMessagesHandler extends Thread {
 		String clients = message.replace("/list:","");
 		String[] clientsArray = clients.split(",");
 		getClientFrame().getClientsList().setListData(clientsArray);
-		getClientFrame().getClientsList().setVisibleRowCount(getClientFrame().getClientsList().getVisibleRowCount() -1);		
+		getClientFrame().getClientsList().setVisibleRowCount(getClientFrame().getClientsList().getVisibleRowCount() -1);
+		getClientFrame().highLightCurrentNickname();
 	}
 
 	/**

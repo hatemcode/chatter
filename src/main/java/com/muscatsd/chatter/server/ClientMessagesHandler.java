@@ -1,16 +1,10 @@
 package com.muscatsd.chatter.server;
 
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.Socket;
 import java.util.logging.Logger;
 
-import javax.swing.JOptionPane;
-
-import com.hatemcode.chatter.responder.MessageResponder;
-import com.hatemcode.chatter.responder.imp.ClientMessageResponder;
 import com.muscatsd.chatter.server.frame.ServerFrame;
 
 public class ClientMessagesHandler extends Thread {
