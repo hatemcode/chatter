@@ -32,37 +32,32 @@ public class ClientMessagesHandler extends Thread {
 		
 		getServerFrame().logToFrame("new client message handler ..");
 		
-		 while (true) {
+		 while (!getClient().isClosed()) {
 			 
 			 try {
-				if(!getClient().isClosed()){ 
 					
-					DataInputStream inputStream = new DataInputStream(getClient().getInputStream());
-					String message = inputStream.readUTF();
+				DataInputStream inputStream = new DataInputStream(getClient().getInputStream());
+				String message = inputStream.readUTF();
+				
+				if(message.startsWith("/user/")){
 					
-					if(message.startsWith("/user/")){
-						
-						newUser(message);
-						
-					}else if(message.startsWith("/message/")){
-						
-						publicMessage(message);
-						
-					}else if(message.startsWith("/leave/")){
-						
-						leaveChat(message);
-						
-					}else{
-						getServerFrame().logToFrame(message);
-					}
+					newUser(message);
+					
+				}else if(message.startsWith("/message/")){
+					
+					publicMessage(message);
+					
+				}else if(message.startsWith("/leave/")){
+					
+					leaveChat(message);
+					
 				}else{
-					
-					break;
+					getServerFrame().logToFrame(message);
 				}
+
 				
 			} catch (IOException e) {
-				JOptionPane.showMessageDialog(null, e.getMessage() , "Error",JOptionPane.ERROR_MESSAGE); e.printStackTrace();
-
+				break;
 
 			}
 
