@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.DataOutputStream;
@@ -20,7 +22,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 @SuppressWarnings("serial")
-public class ClientMainFrame extends JFrame implements ActionListener,WindowListener {
+public class ClientFrame extends JFrame implements ActionListener,WindowListener,KeyListener{
 
 	private final Logger logger = Logger.getLogger(getClass().getName());
 
@@ -36,26 +38,44 @@ public class ClientMainFrame extends JFrame implements ActionListener,WindowList
 	private Socket client;
 	private String nickname;
 	
-	public ClientMainFrame(){
+	public ClientFrame(Socket socket,String nickname){
+		setNickname(nickname);
+		setClient(socket);
 		constructFrame();
 		constructControllers();
-		constructListners();
+		constructListeners();
 	}
 	
+	public ClientFrame(){
+		constructFrame();
+		constructControllers();
+		constructListeners();
+	}
+	
+	/**
+	 * Driver of Client Frame.
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		
-		ClientMainFrame clientMainFrame = new ClientMainFrame();
+		ClientFrame clientMainFrame = new ClientFrame();
 		clientMainFrame.showFrame();
 	}
 
+	/**
+	 * Construct client frame.
+	 */
 	public void constructFrame(){
-		setTitle(getFrameTitle());
+		setTitle(getFrameTitle() + " - " + getNickname());
 		setSize(getFrameSize());
 		setResizable(false);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
+	/**
+	 * Construct client frame controllers.
+	 */
 	public void constructControllers(){
 		getMainPanel().setLayout(new FlowLayout());
 
@@ -70,7 +90,7 @@ public class ClientMainFrame extends JFrame implements ActionListener,WindowList
 		getMainPanel().add(new JScrollPane(getPublicChatTextArea()));
 
 		getMessageTextArea().setColumns(42);
-		getMessageTextArea().setRows(2);
+		getMessageTextArea().setRows(3);
 		getMainPanel().add(new JScrollPane(getMessageTextArea()));
 		
 		getMainPanel().add(getSendButton());
@@ -78,15 +98,25 @@ public class ClientMainFrame extends JFrame implements ActionListener,WindowList
 		add(getMainPanel());
 	}
 	
-	public void constructListners(){
+	/**
+	 * Construct event listeners.
+	 */
+	public void constructListeners(){
 		addWindowListener(this);
+		getMessageTextArea().addKeyListener(this);
 		getSendButton().addActionListener(this);
 	}
 	
+	/**
+	 * Show client frame.
+	 */
 	public void showFrame(){
 		setVisible(true);
 	}
 	
+	/**
+	 * Close the client frame.
+	 */
 	public void closeFrame(){
 		System.exit(0);
 	}
@@ -98,8 +128,25 @@ public class ClientMainFrame extends JFrame implements ActionListener,WindowList
 		}
 		
 	}
+
+	/**
+	 * Highlight current nickname.
+	 */
+	public void highLightCurrentNickname(){
+		for (int i = 0; i < getClientsList().getModel().getSize(); i++) {
+			
+			Object item = getClientsList().getModel().getElementAt(i);
+			
+			if(item.equals(getNickname())){
+				getClientsList().setSelectedIndex(i);
+				break;
+			}
+		}	
+	}
+	
 	
 	public void sendMessage(){
+		
 		OutputStream broadcast;
 		try {
 			broadcast = getClient().getOutputStream();
@@ -141,6 +188,26 @@ public class ClientMainFrame extends JFrame implements ActionListener,WindowList
 		
 	}
 
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+		if(arg0.getKeyCode() == KeyEvent.VK_ENTER){
+			arg0.consume();
+			sendMessage();
+		}
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 	@Override
 	public void windowDeactivated(WindowEvent arg0) {
 		// TODO Auto-generated method stub
