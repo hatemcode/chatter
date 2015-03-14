@@ -73,7 +73,7 @@ public class ClientMessagesHandler extends Thread {
 			
 			getServerSession().sendMessage(getClient(),"/user accepted/");
 			getServerSession().broadcastList();
-			getServerSession().broadcast(nickname + " joined chat\n");
+			getServerSession().broadcast(nickname + " joined chat");
 			
 		}else{
 			getServerSession().sendMessage(getClient(), "/user rejected/");
