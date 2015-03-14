@@ -6,6 +6,11 @@ import com.hatemcode.chatter.responder.MessageResponder;
 import com.hatemcode.chatter.server.Client;
 import com.hatemcode.chatter.server.ClientMessagesHandler;
 
+/**
+ * Client messages responder.
+ * @author Hatem Al Amri
+ *
+ */
 public class ClientMessageResponder implements MessageResponder {
 
 	private ClientMessagesHandler clientMessagesHandler;

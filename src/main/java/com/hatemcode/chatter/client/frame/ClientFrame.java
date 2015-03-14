@@ -21,6 +21,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+/**
+ * Main client frame.
+ * @author Hatem Al Amri
+ *
+ */
 @SuppressWarnings("serial")
 public class ClientFrame extends JFrame implements ActionListener,WindowListener,KeyListener{
 
@@ -30,7 +35,7 @@ public class ClientFrame extends JFrame implements ActionListener,WindowListener
 	private final Dimension frameSize = new Dimension(600,420);
 
 	private JPanel mainPanel = new JPanel();
-	private JList clientsList = new JList();
+	private JList<String> clientsList = new JList<String>();
 	private JTextArea publicChatTextArea = new JTextArea();
 	private JTextArea messageTextArea = new JTextArea();
 	private JButton sendButton = new JButton("Send");

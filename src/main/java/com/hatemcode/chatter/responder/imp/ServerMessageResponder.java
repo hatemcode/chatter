@@ -8,6 +8,11 @@ import javax.swing.JOptionPane;
 import com.hatemcode.chatter.client.ServerMessagesHandler;
 import com.hatemcode.chatter.responder.MessageResponder;
 
+/**
+ * Server messages responder.
+ * @author Hatem Al Amri
+ *
+ */
 public class ServerMessageResponder implements MessageResponder {
 	
 	private ServerMessagesHandler serverMessagesHandler;

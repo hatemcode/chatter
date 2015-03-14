@@ -21,6 +21,11 @@ import javax.swing.JTextField;
 
 import com.hatemcode.chatter.client.ServerMessagesHandler;
 
+/**
+ * Client Access Frame.
+ * @author Hatem Al Amri
+ *
+ */
 @SuppressWarnings("serial")
 public class ClientAccessFrame extends JFrame implements ActionListener {
 
