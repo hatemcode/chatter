@@ -5,6 +5,10 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Logger;
 
 import javax.swing.JButton;
@@ -218,7 +222,10 @@ public class ServerFrame extends JFrame implements Runnable,ActionListener {
 	 * @param message
 	 */
 	public void logToFrame(String message){
-		getLogsTextArea().append("\n" + message);
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Date date = new Date();
+		
+		getLogsTextArea().append("\n" + message + " (" + dateFormat.format(date) + ")");
 	}
 	
 	/**
