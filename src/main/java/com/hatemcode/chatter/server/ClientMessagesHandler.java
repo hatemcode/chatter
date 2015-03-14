@@ -28,14 +28,18 @@ public class ClientMessagesHandler extends Thread {
 		
 		getServerFrame().logToFrame("new client message handler ..");
 		
+		handleMessages();
+		
+	}
+	
+	private void handleMessages(){
+		
 		 while (!getSocket().isClosed()) {
 			 
 			 getMessageResponder().respond();
-
+	
 		 }
 	}
-	
-	
 
 	/*** Getters & Setters ***/
 	public Logger getLogger() {
