@@ -140,7 +140,7 @@ public class ClientAccessFrame extends JFrame implements ActionListener {
 							ClientFrame clientFrame = new ClientFrame(getSocket(),getNicknameText().getText());
 							clientFrame.showFrame();
 							ServerMessagesHandler serverMessagesHandler = new ServerMessagesHandler();
-							serverMessagesHandler.setClient(getSocket());
+							serverMessagesHandler.setSocket(getSocket());
 							serverMessagesHandler.setClientFrame(clientFrame);
 							serverMessagesHandler.start();
 							dispose();

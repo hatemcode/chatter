@@ -19,7 +19,7 @@ public class ServerMessagesHandler extends Thread {
 	
 	private final Logger logger = Logger.getLogger(getClass().getName());
 	
-	private Socket client;
+	private Socket socket;
 	private ClientFrame clientFrame;
 	private MessageResponder messageResponder;
 
@@ -39,14 +39,14 @@ public class ServerMessagesHandler extends Thread {
 	public void handleMessages(){
 		
 		// keep search about incoming messages
-		while(!getClient().isClosed()){
+		while(!getSocket().isClosed()){
 			
 			// search about messages if socket is alive
-			if(!getClient().isClosed()){
+			if(!getSocket().isClosed()){
 				DataInputStream inputStream;
 				try {
 					
-					inputStream = new DataInputStream(getClient().getInputStream());
+					inputStream = new DataInputStream(getSocket().getInputStream());
 					String message = inputStream.readUTF();
 					
 					if(!message.startsWith("/")){
@@ -92,6 +92,7 @@ public class ServerMessagesHandler extends Thread {
 	 * When serve sending the clients list.
 	 * @param message
 	 */
+	@SuppressWarnings("unchecked")
 	public void listReceived(String message){
 		
 		String clients = message.replace("/list:","");
@@ -127,15 +128,6 @@ public class ServerMessagesHandler extends Thread {
 	}
 
 
-
-	public Socket getClient() {
-		return client;
-	}
-
-	public void setClient(Socket client) {
-		this.client = client;
-	}
-
 	public ClientFrame getClientFrame() {
 		return clientFrame;
 	}
@@ -150,6 +142,14 @@ public class ServerMessagesHandler extends Thread {
 
 	public void setMessageResponder(MessageResponder messageResponder) {
 		this.messageResponder = messageResponder;
+	}
+
+	public Socket getSocket() {
+		return socket;
+	}
+
+	public void setSocket(Socket socket) {
+		this.socket = socket;
 	}
 
 
