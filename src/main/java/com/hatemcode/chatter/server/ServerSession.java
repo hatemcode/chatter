@@ -168,7 +168,7 @@ public class ServerSession extends Thread {
 			
 			try {
 				// close client socket
-				client.getClientMessagesHandler().getClient().close();
+				client.getClientMessagesHandler().getSocket().close();
 				
 			} catch (IOException e) {
 				

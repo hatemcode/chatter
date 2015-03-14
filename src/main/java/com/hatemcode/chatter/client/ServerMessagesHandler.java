@@ -1,11 +1,7 @@
 package com.hatemcode.chatter.client;
 
-import java.io.DataInputStream;
-import java.io.IOException;
 import java.net.Socket;
 import java.util.logging.Logger;
-
-import javax.swing.JOptionPane;
 
 import com.hatemcode.chatter.client.frame.ClientFrame;
 import com.hatemcode.chatter.responder.MessageResponder;
@@ -24,7 +20,7 @@ public class ServerMessagesHandler extends Thread {
 	private MessageResponder messageResponder;
 
 	public ServerMessagesHandler(){
-		setMessageResponder(new ServerMessageResponder());
+		setMessageResponder(new ServerMessageResponder(this));
 
 	}
 
@@ -43,74 +39,13 @@ public class ServerMessagesHandler extends Thread {
 			
 			// search about messages if socket is alive
 			if(!getSocket().isClosed()){
-				DataInputStream inputStream;
-				try {
-					
-					inputStream = new DataInputStream(getSocket().getInputStream());
-					String message = inputStream.readUTF();
-					
-					if(!message.startsWith("/")){
-						
-						publicAnnouncementReceived(message);
-						
-					}else if(message.startsWith("/message/")){
-						
-						publicMessageReceived(message);
-
-					}else if(message.startsWith("/list")){
-						
-						listReceived(message);
-						
-					}else if(message.startsWith("/stopped/")){
-						
-						serverStopped(message);
-					}
-					
-					
-				} catch (IOException e) {
-					JOptionPane.showMessageDialog(null, e.getMessage() , "Error",JOptionPane.ERROR_MESSAGE); e.printStackTrace();
-	
-				}
+				getMessageResponder().respond();
 			}else{
 				
 				// is socket is closed don't search about incoming messages anymore for this client
 				break;
 			}
 		}		
-	}
-	
-	/**
-	 * When server is stopped.
-	 * @param message
-	 */
-	public void serverStopped(String message){
-		JOptionPane.showMessageDialog(null, "Server is stopped !", "Warning",JOptionPane.WARNING_MESSAGE);
-		getClientFrame().closeFrame();
-	}
-	
-	/**
-	 * When serve sending the clients list.
-	 * @param message
-	 */
-	@SuppressWarnings("unchecked")
-	public void listReceived(String message){
-		
-		String clients = message.replace("/list:","");
-		String[] clientsArray = clients.split(",");
-		getClientFrame().getClientsList().setListData(clientsArray);
-		getClientFrame().getClientsList().setVisibleRowCount(getClientFrame().getClientsList().getVisibleRowCount() -1);
-		getClientFrame().highLightCurrentNickname();
-	}
-
-	/**
-	 * When public message is received.
-	 * @param message
-	 */
-	public void publicMessageReceived(String message){
-		
-		message = message.replace("/message/","");
-		getClientFrame().getPublicChatTextArea().append("\n" + message);
-
 	}
 	
 
