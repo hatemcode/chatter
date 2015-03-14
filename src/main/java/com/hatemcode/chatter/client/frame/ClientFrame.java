@@ -35,7 +35,7 @@ public class ClientFrame extends JFrame implements ActionListener,WindowListener
 	private final Dimension frameSize = new Dimension(600,420);
 
 	private JPanel mainPanel = new JPanel();
-	private JList<String> clientsList = new JList<String>();
+	private JList clientsList = new JList();
 	private JTextArea publicChatTextArea = new JTextArea();
 	private JTextArea messageTextArea = new JTextArea();
 	private JButton sendButton = new JButton("Send");

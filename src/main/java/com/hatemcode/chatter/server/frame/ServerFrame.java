@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,11 +13,11 @@ import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-
 import com.hatemcode.chatter.server.Server;
 import com.hatemcode.chatter.server.enumeration.ServerStatus;
 
@@ -37,6 +36,7 @@ public class ServerFrame extends JFrame implements Runnable,ActionListener {
 	
 	// frame controllers
 	private JPanel mainPanel = new JPanel();
+	private JMenuBar menubar = new JMenuBar();
 	private JLabel serverStatusLabel = new JLabel();
 	private JLabel serverNameLabel = new JLabel("Server Name:");
 	private JLabel serverPortLabel = new JLabel("Server Port:");;
@@ -87,7 +87,7 @@ public class ServerFrame extends JFrame implements Runnable,ActionListener {
 	 * Build frame controllers.
 	 */
 	private void constructControllers(){
-		
+
 		// set main panel layout
 		getMainPanel().setLayout(new FlowLayout());
 		
@@ -320,6 +320,14 @@ public class ServerFrame extends JFrame implements Runnable,ActionListener {
 
 	public void setLogsTextArea(JTextArea logsTextArea) {
 		this.logsTextArea = logsTextArea;
+	}
+
+	public JMenuBar getMenubar() {
+		return menubar;
+	}
+
+	public void setMenubar(JMenuBar menubar) {
+		this.menubar = menubar;
 	}
 
 

@@ -74,8 +74,7 @@ public class Server {
 	public Boolean start(){
 		try {
 			// prepare server socket and establish it
-			ServerSocket serverSocket = new ServerSocket();
-			serverSocket.bind(new InetSocketAddress(InetAddress.getLocalHost().getHostName(), getServerPort()));
+			ServerSocket serverSocket = new ServerSocket(getServerPort());
 			setSocket(serverSocket);
 			
 			// prepare server session and start it
