@@ -1,4 +1,4 @@
-package com.muscatsd.chatter.server.frame;
+package com.hatemcode.chatter.server.frame;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -15,8 +15,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import com.muscatsd.chatter.server.Server;
-import com.muscatsd.chatter.server.enumeration.ServerStatus;
+import com.hatemcode.chatter.server.Server;
+import com.hatemcode.chatter.server.enumeration.ServerStatus;
 
 @SuppressWarnings("serial")
 public class ServerFrame extends JFrame implements Runnable,ActionListener {

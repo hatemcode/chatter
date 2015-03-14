@@ -1,4 +1,4 @@
-package com.muscatsd.chatter.server;
+package com.hatemcode.chatter.server;
 
 import java.net.Socket;
 

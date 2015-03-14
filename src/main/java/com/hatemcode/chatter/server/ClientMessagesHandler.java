@@ -1,11 +1,11 @@
-package com.muscatsd.chatter.server;
+package com.hatemcode.chatter.server;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.logging.Logger;
 
-import com.muscatsd.chatter.server.frame.ServerFrame;
+import com.hatemcode.chatter.server.frame.ServerFrame;
 
 public class ClientMessagesHandler extends Thread {
 	

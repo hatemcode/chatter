@@ -1,4 +1,4 @@
-package com.muscatsd.chatter.client.frame;
+package com.hatemcode.chatter.client.frame;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -19,7 +19,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import com.muscatsd.chatter.client.ServerMessagesHandler;
+import com.hatemcode.chatter.client.ServerMessagesHandler;
 
 @SuppressWarnings("serial")
 public class ClientAccessFrame extends JFrame implements ActionListener {

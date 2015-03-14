@@ -1,4 +1,4 @@
-package com.muscatsd.chatter.client;
+package com.hatemcode.chatter.client;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -7,9 +7,9 @@ import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
+import com.hatemcode.chatter.client.frame.ClientFrame;
 import com.hatemcode.chatter.responder.MessageResponder;
 import com.hatemcode.chatter.responder.imp.ServerMessageResponder;
-import com.muscatsd.chatter.client.frame.ClientFrame;
 
 /**
  * Handler thread for messages coming from the server to specific client.

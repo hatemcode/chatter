@@ -1,4 +1,4 @@
-package com.muscatsd.chatter.client.frame;
+package com.hatemcode.chatter.client.frame;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;

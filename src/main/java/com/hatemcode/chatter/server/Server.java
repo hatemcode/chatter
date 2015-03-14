@@ -1,4 +1,4 @@
-package com.muscatsd.chatter.server;
+package com.hatemcode.chatter.server;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -8,8 +8,8 @@ import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
-import com.muscatsd.chatter.server.enumeration.ServerStatus;
-import com.muscatsd.chatter.server.frame.ServerFrame;
+import com.hatemcode.chatter.server.enumeration.ServerStatus;
+import com.hatemcode.chatter.server.frame.ServerFrame;
 
 /**
  * Represent the server application.

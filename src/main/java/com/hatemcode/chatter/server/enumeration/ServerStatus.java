@@ -1,4 +1,4 @@
-package com.muscatsd.chatter.server.enumeration;
+package com.hatemcode.chatter.server.enumeration;
 
 /**
  * Server statuses.
