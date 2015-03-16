@@ -3,7 +3,7 @@
 ## What is Chatter about ?
 Is Local Network Messaging Application.
 
-## Fetures 
+## Features 
 * Working on local network enviroment through all connection points (Interfaces).
 * Public chat room.
 * Activity monitoring.
