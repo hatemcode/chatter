@@ -122,6 +122,11 @@ public class ClientAccessFrame extends JFrame implements ActionListener {
 		setServerPort(Integer.parseInt(getServerPortText().getText()));
 		setNickname(getNicknameText().getText());
 		
+		getNicknameText().setEnabled(false);
+		getServerHostText().setEnabled(false);
+		getServerPortText().setEnabled(false);
+		getEnterChatButton().setEnabled(false);
+		
 		 Runnable run = new Runnable() {
 			    public void run() {
 					try {
@@ -152,11 +157,17 @@ public class ClientAccessFrame extends JFrame implements ActionListener {
 							
 						}
 						
+						
 					} catch (IOException e) {
 						JOptionPane.showMessageDialog(null, "Make sure about host and port." + e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
 						
 
 					}
+					
+					getNicknameText().setEnabled(true);
+					getServerHostText().setEnabled(true);
+					getServerPortText().setEnabled(true);
+					getEnterChatButton().setEnabled(true);
 			    }
 			 };
 			 
