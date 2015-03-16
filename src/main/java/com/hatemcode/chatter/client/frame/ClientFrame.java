@@ -150,19 +150,27 @@ public class ClientFrame extends JFrame implements ActionListener,WindowListener
 		}	
 	}
 	
-	
+	/**
+	 * Send public message.
+	 */
 	public void sendMessage(){
 		
-		OutputStream broadcast;
-		try {
-			broadcast = getClient().getOutputStream();
-			DataOutputStream out = new DataOutputStream(broadcast);
-			out.writeUTF("/message/" + getNickname() + ": " + getMessageTextArea().getText());
-			getMessageTextArea().setText("");
-		} catch (IOException e) {
-
-			e.printStackTrace();
-		}	
+		// trim the message
+		String message = getMessageTextArea().getText().trim();
+		
+		// if message not empty try to send it
+		if(message.length() > 0){
+			OutputStream broadcast;
+			try {
+				broadcast = getClient().getOutputStream();
+				DataOutputStream out = new DataOutputStream(broadcast);
+				out.writeUTF("/message/" + getNickname() + ": " + getMessageTextArea().getText());
+				getMessageTextArea().setText("");
+			} catch (IOException e) {
+	
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public void sendMessage(String message){
