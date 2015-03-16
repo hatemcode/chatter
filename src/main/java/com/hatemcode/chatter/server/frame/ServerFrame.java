@@ -106,6 +106,7 @@ public class ServerFrame extends JFrame implements Runnable,ActionListener {
 		getMainPanel().add(getStatusToggleButton());
 		
 		// server logs
+		getLogsTextArea().setEditable(false);
 		getLogsTextArea().setColumns(40);
 		getLogsTextArea().setRows(20);
 		getMainPanel().add(new JScrollPane(getLogsTextArea()));

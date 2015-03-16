@@ -90,6 +90,7 @@ public class ClientFrame extends JFrame implements ActionListener,WindowListener
 		getMainPanel().add( new JScrollPane(getClientsList()));
 	
 		
+		getPublicChatTextArea().setEditable(false);
 		getPublicChatTextArea().setColumns(40);
 		getPublicChatTextArea().setRows(20);
 		getMainPanel().add(new JScrollPane(getPublicChatTextArea()));
