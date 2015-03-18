@@ -22,18 +22,15 @@ import com.hatemcode.chatter.server.frame.ServerFrame;
  */
 public class ServerSession extends Thread {
 
-    private final Logger logger = Logger.getLogger(getClass().getName());
+    private static final Logger LOG = Logger.getLogger(ServerSession.class.getName());
 
     private ServerSocket serverSocket;
-    //private List<Client> clients = new ArrayList<Client>();
-    private HashMap<Integer, Client> clients = new HashMap<Integer, Client>();
+    private HashMap<Integer, Client> clients = new HashMap<>();
 
     // server frame
     private ServerFrame serverFrame;
 
-    /**
-     * Run server session thread.
-     */
+    @Override
     public void run() {
 
         getServerFrame().logToFrame("Server session is started ..");
@@ -41,12 +38,9 @@ public class ServerSession extends Thread {
             getServerFrame().logToFrame("Server Host/IP is: " + InetAddress.getLocalHost());
         } catch (UnknownHostException e) {
             JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
 
         }
-
         handlingClients();
-
     }
 
     /**
@@ -95,7 +89,6 @@ public class ServerSession extends Thread {
 
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
 
             }
 
@@ -160,7 +153,7 @@ public class ServerSession extends Thread {
         Client client = searchClients(nickname);
         if (client != null) {
             // remove client from clients list
-            getClients().remove(client.getId().intValue());
+            getClients().remove(client.getId());
 
             getServerFrame().logToFrame("Client(" + client.getId() + "): " + client.getNickname() + " leaves");
             getServerFrame().logToFrame("Connected clients number: " + getClients().size());
@@ -177,7 +170,6 @@ public class ServerSession extends Thread {
             } catch (IOException e) {
 
                 JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
 
             }
         }
@@ -197,7 +189,6 @@ public class ServerSession extends Thread {
             dataStream.writeUTF(message);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
 
         }
     }
@@ -216,7 +207,6 @@ public class ServerSession extends Thread {
             dataStream.writeUTF(message);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
 
         }
     }
@@ -262,13 +252,6 @@ public class ServerSession extends Thread {
         return getClients().size();
     }
 
-    /**
-     * * Getters & Setters **
-     */
-    public Logger getLogger() {
-        return logger;
-    }
-
     public ServerSocket getServerSocket() {
         return serverSocket;
     }
@@ -292,5 +275,4 @@ public class ServerSession extends Thread {
     public void setClients(HashMap<Integer, Client> clients) {
         this.clients = clients;
     }
-
 }

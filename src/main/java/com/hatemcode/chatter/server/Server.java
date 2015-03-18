@@ -15,7 +15,7 @@ import com.hatemcode.chatter.server.frame.ServerFrame;
  */
 public class Server {
 
-    private Logger logger = Logger.getLogger(getClass().getName());
+    private static final Logger LOG = Logger.getLogger(Server.class.getName());
 
     // server attributes
     private String serverName;
@@ -35,10 +35,9 @@ public class Server {
      * Default constructor.
      */
     public Server() {
-
-        setServerName(DEFAULT_SERVER_NAME);
-        setServerPort(DEFAULT_SERVER_PORT);
-        setServerFrame(new ServerFrame(this));
+        this.serverName = DEFAULT_SERVER_NAME;
+        this.serverPort = DEFAULT_SERVER_PORT;
+        this.serverFrame = new ServerFrame(this);
     }
 
     /**
@@ -49,14 +48,15 @@ public class Server {
      */
     public Server(String serverName, Integer serverPort) {
 
-        setServerName(serverName);
-        setServerPort(serverPort);
-        setServerFrame(new ServerFrame(this));
-
+        this.serverName = serverName;
+        this.serverPort = serverPort;
+        this.serverFrame = new ServerFrame(this);
     }
 
     /**
      * Server application driver.
+     *
+     * @param args
      */
     public static void main(String[] args) {
         Server server = new Server();
@@ -76,7 +76,6 @@ public class Server {
             setSocket(serverSocket);
 
             // prepare server session and start it
-            ServerSession serverSession = new ServerSession();
             setServerSession(serverSession);
             getServerSession().setServerSocket(getSocket());
             getServerSession().setServerFrame(getServerFrame());
@@ -127,7 +126,6 @@ public class Server {
 
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
 
             }
         }
@@ -136,9 +134,6 @@ public class Server {
         return false;
     }
 
-    /**
-     * * Getters & Setters *
-     */
     public String getServerName() {
         return serverName;
     }
@@ -177,14 +172,6 @@ public class Server {
 
     public void setSocket(ServerSocket socket) {
         this.socket = socket;
-    }
-
-    public Logger getLogger() {
-        return logger;
-    }
-
-    public void setLogger(Logger logger) {
-        this.logger = logger;
     }
 
     public String getDEFAULT_SERVER_NAME() {

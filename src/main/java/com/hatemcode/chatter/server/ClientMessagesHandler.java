@@ -9,7 +9,7 @@ import com.hatemcode.chatter.server.frame.ServerFrame;
 
 public class ClientMessagesHandler extends Thread {
 
-    private final Logger logger = Logger.getLogger(getClass().getName());
+    private static final Logger LOG = Logger.getLogger(ClientMessagesHandler.class.getName());
 
     private Socket socket;
     private ServerSession serverSession;
@@ -17,34 +17,23 @@ public class ClientMessagesHandler extends Thread {
     private MessageResponder messageResponder;
 
     public ClientMessagesHandler(ServerSession serverSession, Socket client, ServerFrame serverFrame) {
-        setServerSession(serverSession);
-        setSocket(client);
-        setServerFrame(serverFrame);
-        setMessageResponder(new ClientMessageResponder(this));
+        this.serverSession = serverSession;
+        this.socket = client;
+        this.serverFrame = serverFrame;
+        this.messageResponder = new ClientMessageResponder(this);
     }
 
     public void run() {
-
         getServerFrame().logToFrame("new client message handler ..");
-
         handleMessages();
 
     }
 
     private void handleMessages() {
-
         while (!getSocket().isClosed()) {
-
             getMessageResponder().respond();
 
         }
-    }
-
-    /**
-     * * Getters & Setters **
-     */
-    public Logger getLogger() {
-        return logger;
     }
 
     public ServerFrame getServerFrame() {
@@ -78,5 +67,4 @@ public class ClientMessagesHandler extends Thread {
     public void setSocket(Socket socket) {
         this.socket = socket;
     }
-
 }
