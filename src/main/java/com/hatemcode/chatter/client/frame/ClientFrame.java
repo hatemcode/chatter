@@ -23,296 +23,295 @@ import javax.swing.JTextArea;
 
 /**
  * Main client frame.
+ *
  * @author Hatem Al Amri
  *
  */
 @SuppressWarnings("serial")
-public class ClientFrame extends JFrame implements ActionListener,WindowListener,KeyListener{
+public class ClientFrame extends JFrame implements ActionListener, WindowListener, KeyListener {
 
-	private final Logger logger = Logger.getLogger(getClass().getName());
+    private final Logger logger = Logger.getLogger(getClass().getName());
 
-	private final String frameTitle = "Chatter Client";
-	private final Dimension frameSize = new Dimension(600,420);
+    private final String frameTitle = "Chatter Client";
+    private final Dimension frameSize = new Dimension(600, 420);
 
-	private JPanel mainPanel = new JPanel();
-	private JList clientsList = new JList();
-	private JTextArea publicChatTextArea = new JTextArea();
-	private JTextArea messageTextArea = new JTextArea();
-	private JButton sendButton = new JButton("Send");
-	
-	private Socket client;
-	private String nickname;
-	
-	public ClientFrame(Socket socket,String nickname){
-		setNickname(nickname);
-		setClient(socket);
-		constructFrame();
-		constructControllers();
-		constructListeners();
-	}
-	
-	public ClientFrame(){
-		constructFrame();
-		constructControllers();
-		constructListeners();
-	}
-	
-	/**
-	 * Driver of Client Frame.
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		
-		ClientFrame clientMainFrame = new ClientFrame();
-		clientMainFrame.showFrame();
-	}
+    private JPanel mainPanel = new JPanel();
+    private JList clientsList = new JList();
+    private JTextArea publicChatTextArea = new JTextArea();
+    private JTextArea messageTextArea = new JTextArea();
+    private JButton sendButton = new JButton("Send");
 
-	/**
-	 * Construct client frame.
-	 */
-	public void constructFrame(){
-		setTitle(getFrameTitle() + " - " + getNickname());
-		setSize(getFrameSize());
-		setResizable(false);
-		setLocationRelativeTo(null);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-	}
-	
-	/**
-	 * Construct client frame controllers.
-	 */
-	public void constructControllers(){
-		getMainPanel().setLayout(new FlowLayout());
+    private Socket client;
+    private String nickname;
 
-		
-		getClientsList().setVisibleRowCount(20);
-		getClientsList().setFixedCellWidth(100);
-		getMainPanel().add( new JScrollPane(getClientsList()));
-	
-		
-		getPublicChatTextArea().setEditable(false);
-		getPublicChatTextArea().setColumns(40);
-		getPublicChatTextArea().setRows(20);
-		getMainPanel().add(new JScrollPane(getPublicChatTextArea()));
+    public ClientFrame(Socket socket, String nickname) {
+        setNickname(nickname);
+        setClient(socket);
+        constructFrame();
+        constructControllers();
+        constructListeners();
+    }
 
-		getMessageTextArea().setColumns(42);
-		getMessageTextArea().setRows(3);
-		getMainPanel().add(new JScrollPane(getMessageTextArea()));
-		
-		getMainPanel().add(getSendButton());
-		
-		add(getMainPanel());
-	}
-	
-	/**
-	 * Construct event listeners.
-	 */
-	public void constructListeners(){
-		addWindowListener(this);
-		getMessageTextArea().addKeyListener(this);
-		getSendButton().addActionListener(this);
-	}
-	
-	/**
-	 * Show client frame.
-	 */
-	public void showFrame(){
-		setVisible(true);
-	}
-	
-	/**
-	 * Close the client frame.
-	 */
-	public void closeFrame(){
-		System.exit(0);
-	}
+    public ClientFrame() {
+        constructFrame();
+        constructControllers();
+        constructListeners();
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == sendButton){
-			sendMessage();
-		}
-		
-	}
+    /**
+     * Driver of Client Frame.
+     *
+     * @param args
+     */
+    public static void main(String[] args) {
 
-	/**
-	 * Highlight current nickname.
-	 */
-	public void highLightCurrentNickname(){
-		for (int i = 0; i < getClientsList().getModel().getSize(); i++) {
-			
-			Object item = getClientsList().getModel().getElementAt(i);
-			
-			if(item.equals(getNickname())){
-				getClientsList().setSelectedIndex(i);
-				break;
-			}
-		}	
-	}
-	
-	/**
-	 * Send public message.
-	 */
-	public void sendMessage(){
-		
-		// trim the message
-		String message = getMessageTextArea().getText().trim();
-		
-		// if message not empty try to send it
-		if(message.length() > 0){
-			OutputStream broadcast;
-			try {
-				broadcast = getClient().getOutputStream();
-				DataOutputStream out = new DataOutputStream(broadcast);
-				out.writeUTF("/message/" + getNickname() + ": " + getMessageTextArea().getText());
-				getMessageTextArea().setText("");
-			} catch (IOException e) {
-	
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	public void sendMessage(String message){
-		OutputStream broadcast;
-		try {
-			broadcast = getClient().getOutputStream();
-			DataOutputStream out = new DataOutputStream(broadcast);
-			out.writeUTF(message);
-		} catch (IOException e) {
+        ClientFrame clientMainFrame = new ClientFrame();
+        clientMainFrame.showFrame();
+    }
 
-			e.printStackTrace();
-		}	
-	}
+    /**
+     * Construct client frame.
+     */
+    public void constructFrame() {
+        setTitle(getFrameTitle() + " - " + getNickname());
+        setSize(getFrameSize());
+        setResizable(false);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
 
-	@Override
-	public void windowActivated(WindowEvent arg0) {
-		
-		
-	}
+    /**
+     * Construct client frame controllers.
+     */
+    public void constructControllers() {
+        getMainPanel().setLayout(new FlowLayout());
 
-	@Override
-	public void windowClosed(WindowEvent arg0) {
-		
-	}
+        getClientsList().setVisibleRowCount(20);
+        getClientsList().setFixedCellWidth(100);
+        getMainPanel().add(new JScrollPane(getClientsList()));
 
-	@Override
-	public void windowClosing(WindowEvent arg0) {
-		sendMessage("/leave/" + getNickname());	
-		
-	}
+        getPublicChatTextArea().setEditable(false);
+        getPublicChatTextArea().setColumns(40);
+        getPublicChatTextArea().setRows(20);
+        getMainPanel().add(new JScrollPane(getPublicChatTextArea()));
 
-	@Override
-	public void keyPressed(KeyEvent arg0) {
-		if(arg0.getKeyCode() == KeyEvent.VK_ENTER){
-			arg0.consume();
-			sendMessage();
-		}
-		
-	}
+        getMessageTextArea().setColumns(42);
+        getMessageTextArea().setRows(3);
+        getMainPanel().add(new JScrollPane(getMessageTextArea()));
 
-	@Override
-	public void keyReleased(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+        getMainPanel().add(getSendButton());
 
-	@Override
-	public void keyTyped(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void windowDeactivated(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+        add(getMainPanel());
+    }
 
-	@Override
-	public void windowDeiconified(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+    /**
+     * Construct event listeners.
+     */
+    public void constructListeners() {
+        addWindowListener(this);
+        getMessageTextArea().addKeyListener(this);
+        getSendButton().addActionListener(this);
+    }
 
-	@Override
-	public void windowIconified(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+    /**
+     * Show client frame.
+     */
+    public void showFrame() {
+        setVisible(true);
+    }
 
-	@Override
-	public void windowOpened(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public Dimension getFrameSize() {
-		return frameSize;
-	}
+    /**
+     * Close the client frame.
+     */
+    public void closeFrame() {
+        System.exit(0);
+    }
 
-	public String getFrameTitle() {
-		return frameTitle;
-	}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == sendButton) {
+            sendMessage();
+        }
 
-	public Logger getLogger() {
-		return logger;
-	}
+    }
 
-	public JTextArea getPublicChatTextArea() {
-		return publicChatTextArea;
-	}
+    /**
+     * Highlight current nickname.
+     */
+    public void highLightCurrentNickname() {
+        for (int i = 0; i < getClientsList().getModel().getSize(); i++) {
 
-	public void setPublicChatTextArea(JTextArea publicChatTextArea) {
-		this.publicChatTextArea = publicChatTextArea;
-	}
+            Object item = getClientsList().getModel().getElementAt(i);
 
-	public JPanel getMainPanel() {
-		return mainPanel;
-	}
+            if (item.equals(getNickname())) {
+                getClientsList().setSelectedIndex(i);
+                break;
+            }
+        }
+    }
 
-	public void setMainPanel(JPanel mainPanel) {
-		this.mainPanel = mainPanel;
-	}
+    /**
+     * Send public message.
+     */
+    public void sendMessage() {
 
-	public JList getClientsList() {
-		return clientsList;
-	}
+        // trim the message
+        String message = getMessageTextArea().getText().trim();
 
-	public void setClientsList(JList clientsList) {
-		this.clientsList = clientsList;
-	}
+        // if message not empty try to send it
+        if (message.length() > 0) {
+            OutputStream broadcast;
+            try {
+                broadcast = getClient().getOutputStream();
+                DataOutputStream out = new DataOutputStream(broadcast);
+                out.writeUTF("/message/" + getNickname() + ": " + getMessageTextArea().getText());
+                getMessageTextArea().setText("");
+            } catch (IOException e) {
 
-	public JTextArea getMessageTextArea() {
-		return messageTextArea;
-	}
+                e.printStackTrace();
+            }
+        }
+    }
 
-	public void setMessageTextArea(JTextArea messageTextArea) {
-		this.messageTextArea = messageTextArea;
-	}
+    public void sendMessage(String message) {
+        OutputStream broadcast;
+        try {
+            broadcast = getClient().getOutputStream();
+            DataOutputStream out = new DataOutputStream(broadcast);
+            out.writeUTF(message);
+        } catch (IOException e) {
 
-	public JButton getSendButton() {
-		return sendButton;
-	}
+            e.printStackTrace();
+        }
+    }
 
-	public void setSendButton(JButton sendButton) {
-		this.sendButton = sendButton;
-	}
+    @Override
+    public void windowActivated(WindowEvent arg0) {
 
-	public Socket getClient() {
-		return client;
-	}
+    }
 
-	public void setClient(Socket client) {
-		this.client = client;
-	}
+    @Override
+    public void windowClosed(WindowEvent arg0) {
 
-	public String getNickname() {
-		return nickname;
-	}
+    }
 
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
-	}
+    @Override
+    public void windowClosing(WindowEvent arg0) {
+        sendMessage("/leave/" + getNickname());
 
+    }
+
+    @Override
+    public void keyPressed(KeyEvent arg0) {
+        if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
+            arg0.consume();
+            sendMessage();
+        }
+
+    }
+
+    @Override
+    public void keyReleased(KeyEvent arg0) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void keyTyped(KeyEvent arg0) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent arg0) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent arg0) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void windowIconified(WindowEvent arg0) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void windowOpened(WindowEvent arg0) {
+        // TODO Auto-generated method stub
+
+    }
+
+    public Dimension getFrameSize() {
+        return frameSize;
+    }
+
+    public String getFrameTitle() {
+        return frameTitle;
+    }
+
+    public Logger getLogger() {
+        return logger;
+    }
+
+    public JTextArea getPublicChatTextArea() {
+        return publicChatTextArea;
+    }
+
+    public void setPublicChatTextArea(JTextArea publicChatTextArea) {
+        this.publicChatTextArea = publicChatTextArea;
+    }
+
+    public JPanel getMainPanel() {
+        return mainPanel;
+    }
+
+    public void setMainPanel(JPanel mainPanel) {
+        this.mainPanel = mainPanel;
+    }
+
+    public JList getClientsList() {
+        return clientsList;
+    }
+
+    public void setClientsList(JList clientsList) {
+        this.clientsList = clientsList;
+    }
+
+    public JTextArea getMessageTextArea() {
+        return messageTextArea;
+    }
+
+    public void setMessageTextArea(JTextArea messageTextArea) {
+        this.messageTextArea = messageTextArea;
+    }
+
+    public JButton getSendButton() {
+        return sendButton;
+    }
+
+    public void setSendButton(JButton sendButton) {
+        this.sendButton = sendButton;
+    }
+
+    public Socket getClient() {
+        return client;
+    }
+
+    public void setClient(Socket client) {
+        this.client = client;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
 
 }

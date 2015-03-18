@@ -23,274 +23,259 @@ import com.hatemcode.chatter.client.ServerMessagesHandler;
 
 /**
  * Client Access Frame.
+ *
  * @author Hatem Al Amri
  *
  */
 @SuppressWarnings("serial")
 public class ClientAccessFrame extends JFrame implements ActionListener {
 
-	private final Logger logger = Logger.getLogger(getClass().getName());
+    private final Logger logger = Logger.getLogger(getClass().getName());
 
-	private final String frameTitle = "Chatter Client";
-	private final Dimension frameSize = new Dimension(350,130);
+    private final String frameTitle = "Chatter Client";
+    private final Dimension frameSize = new Dimension(350, 130);
 
-	private JPanel mainPanel = new JPanel();
-	private JLabel nicknameLabel = new JLabel("Nickname:");
-	private JLabel serverHostLabel = new JLabel("Host:");
-	private JLabel serverPortLabel = new JLabel("Port:");
-	private JTextField nicknameText = new JTextField();
-	private JTextField serverHostText = new JTextField();
-	private JTextField serverPortText = new JTextField();
-	private JButton enterChatButton = new JButton("Enter Chat");
-	
-	private String nickname;
-	private String serverHost;
-	private Integer serverPort;
-	
-	private Socket socket;
-	
+    private JPanel mainPanel = new JPanel();
+    private JLabel nicknameLabel = new JLabel("Nickname:");
+    private JLabel serverHostLabel = new JLabel("Host:");
+    private JLabel serverPortLabel = new JLabel("Port:");
+    private JTextField nicknameText = new JTextField();
+    private JTextField serverHostText = new JTextField();
+    private JTextField serverPortText = new JTextField();
+    private JButton enterChatButton = new JButton("Enter Chat");
 
-	public ClientAccessFrame(){
-		setNickname("Client");
-		setServerHost("127.0.0.1");
-		setServerPort(5555);
-		
-		constructFrame();
-		constructControllers();
-		constructListners();
-	}
-	
+    private String nickname;
+    private String serverHost;
+    private Integer serverPort;
 
+    private Socket socket;
 
-	public static void main(String[] args) {
-		
-		ClientAccessFrame clientAccessFrame = new ClientAccessFrame();
-		clientAccessFrame.showFrame();
-	}
+    public ClientAccessFrame() {
+        setNickname("Client");
+        setServerHost("127.0.0.1");
+        setServerPort(5555);
 
-	public void constructFrame(){
-		setTitle(getFrameTitle());
-		setSize(getFrameSize());
-		setResizable(false);
-		setLocationRelativeTo(null);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-	}
-	
-	public void constructControllers(){
-		getMainPanel().setLayout(new FlowLayout());
-		
-		getMainPanel().add(getNicknameLabel());
-		getNicknameText().setText(getNickname());
-		getMainPanel().add(getNicknameText());
-		
-		getMainPanel().add(getServerHostLabel());
-		getServerHostText().setText(getServerHost());
-		getMainPanel().add(getServerHostText());
-		
-		getMainPanel().add(getServerPortLabel());
-		getServerPortText().setText(getServerPort().toString());
-		getMainPanel().add(getServerPortText());
-		
-		getMainPanel().add(getEnterChatButton());
-		
-		add(getMainPanel());
-	}
+        constructFrame();
+        constructControllers();
+        constructListners();
+    }
 
-	public void constructListners(){
+    public static void main(String[] args) {
 
-		getEnterChatButton().addActionListener(this);
-	}
+        ClientAccessFrame clientAccessFrame = new ClientAccessFrame();
+        clientAccessFrame.showFrame();
+    }
 
-	
-	public void showFrame(){
-		getNicknameText().setFocusable(true);
-		setVisible(true);
-	}
-	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		
-		if(e.getSource() == enterChatButton){
-			enterChat();
-		}
+    public void constructFrame() {
+        setTitle(getFrameTitle());
+        setSize(getFrameSize());
+        setResizable(false);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
 
-	}
-	
-	public void enterChat(){
-		
-		setServerHost(getServerHostText().getText());
-		setServerPort(Integer.parseInt(getServerPortText().getText()));
-		setNickname(getNicknameText().getText());
-		
-		getNicknameText().setEnabled(false);
-		getServerHostText().setEnabled(false);
-		getServerPortText().setEnabled(false);
-		getEnterChatButton().setEnabled(false);
-		
-		 Runnable run = new Runnable() {
-			    public void run() {
-					try {
-						
-						setSocket(new Socket(getServerHost(),getServerPort()));
-						
-						OutputStream message = getSocket().getOutputStream();
-						DataOutputStream out = new DataOutputStream(message);
-						
-						out.writeUTF("/user/" + getNicknameText().getText());
-						
-						InputStream response = getSocket().getInputStream();
-						DataInputStream in = new DataInputStream(response);
+    public void constructControllers() {
+        getMainPanel().setLayout(new FlowLayout());
 
-						String command = in.readUTF();
-						System.out.print(command);
-						if(command.startsWith("/user rejected/")){
-							JOptionPane.showMessageDialog(null, "Nickname is exist", "Error",JOptionPane.ERROR_MESSAGE);
-						}else if(command.startsWith("/user accepted/")){
-							
-							ClientFrame clientFrame = new ClientFrame(getSocket(),getNicknameText().getText());
-							clientFrame.showFrame();
-							ServerMessagesHandler serverMessagesHandler = new ServerMessagesHandler();
-							serverMessagesHandler.setSocket(getSocket());
-							serverMessagesHandler.setClientFrame(clientFrame);
-							serverMessagesHandler.start();
-							dispose();
-							
-						}
-						
-						
-					} catch (IOException e) {
-						JOptionPane.showMessageDialog(null, "Make sure about host and port." + e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
-						
+        getMainPanel().add(getNicknameLabel());
+        getNicknameText().setText(getNickname());
+        getMainPanel().add(getNicknameText());
 
-					}
-					
-					getNicknameText().setEnabled(true);
-					getServerHostText().setEnabled(true);
-					getServerPortText().setEnabled(true);
-					getEnterChatButton().setEnabled(true);
-			    }
-			 };
-			 
-			 new Thread(run).start();
+        getMainPanel().add(getServerHostLabel());
+        getServerHostText().setText(getServerHost());
+        getMainPanel().add(getServerHostText());
 
-	}
-	
-	public Dimension getFrameSize() {
-		return frameSize;
-	}
+        getMainPanel().add(getServerPortLabel());
+        getServerPortText().setText(getServerPort().toString());
+        getMainPanel().add(getServerPortText());
 
-	public String getFrameTitle() {
-		return frameTitle;
-	}
+        getMainPanel().add(getEnterChatButton());
 
-	public Logger getLogger() {
-		return logger;
-	}
+        add(getMainPanel());
+    }
 
+    public void constructListners() {
 
-	public JPanel getMainPanel() {
-		return mainPanel;
-	}
+        getEnterChatButton().addActionListener(this);
+    }
 
-	public void setMainPanel(JPanel mainPanel) {
-		this.mainPanel = mainPanel;
-	}
+    public void showFrame() {
+        getNicknameText().setFocusable(true);
+        setVisible(true);
+    }
 
-	public JButton getEnterChatButton() {
-		return enterChatButton;
-	}
+    @Override
+    public void actionPerformed(ActionEvent e) {
 
-	public void setEnterChatButton(JButton enterChatButton) {
-		this.enterChatButton = enterChatButton;
-	}
+        if (e.getSource() == enterChatButton) {
+            enterChat();
+        }
 
-	public JLabel getNicknameLabel() {
-		return nicknameLabel;
-	}
+    }
 
-	public void setNicknameLabel(JLabel nicknameLabel) {
-		this.nicknameLabel = nicknameLabel;
-	}
+    public void enterChat() {
 
-	public JLabel getServerPortLabel() {
-		return serverPortLabel;
-	}
+        setServerHost(getServerHostText().getText());
+        setServerPort(Integer.parseInt(getServerPortText().getText()));
+        setNickname(getNicknameText().getText());
 
-	public void setServerPortLabel(JLabel serverPortLabel) {
-		this.serverPortLabel = serverPortLabel;
-	}
+        getNicknameText().setEnabled(false);
+        getServerHostText().setEnabled(false);
+        getServerPortText().setEnabled(false);
+        getEnterChatButton().setEnabled(false);
 
-	public JLabel getServerHostLabel() {
-		return serverHostLabel;
-	}
+        Runnable run = new Runnable() {
+            public void run() {
+                try {
 
-	public void setServerHostLabel(JLabel serverHostLabel) {
-		this.serverHostLabel = serverHostLabel;
-	}
+                    setSocket(new Socket(getServerHost(), getServerPort()));
 
+                    OutputStream message = getSocket().getOutputStream();
+                    DataOutputStream out = new DataOutputStream(message);
 
-	public JTextField getNicknameText() {
-		return nicknameText;
-	}
+                    out.writeUTF("/user/" + getNicknameText().getText());
 
-	public void setNicknameText(JTextField nicknameText) {
-		this.nicknameText = nicknameText;
-	}
+                    InputStream response = getSocket().getInputStream();
+                    DataInputStream in = new DataInputStream(response);
 
-	public JTextField getServerHostText() {
-		return serverHostText;
-	}
+                    String command = in.readUTF();
+                    System.out.print(command);
+                    if (command.startsWith("/user rejected/")) {
+                        JOptionPane.showMessageDialog(null, "Nickname is exist", "Error", JOptionPane.ERROR_MESSAGE);
+                    } else if (command.startsWith("/user accepted/")) {
 
-	public void setServerHostText(JTextField serverHostText) {
-		this.serverHostText = serverHostText;
-	}
+                        ClientFrame clientFrame = new ClientFrame(getSocket(), getNicknameText().getText());
+                        clientFrame.showFrame();
+                        ServerMessagesHandler serverMessagesHandler = new ServerMessagesHandler();
+                        serverMessagesHandler.setSocket(getSocket());
+                        serverMessagesHandler.setClientFrame(clientFrame);
+                        serverMessagesHandler.start();
+                        dispose();
 
-	public JTextField getServerPortText() {
-		return serverPortText;
-	}
+                    }
 
-	public void setServerPortText(JTextField serverPortText) {
-		this.serverPortText = serverPortText;
-	}
-	
-	public String getNickname() {
-		return nickname;
-	}
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(null, "Make sure about host and port." + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
-	}
+                }
 
-	public String getServerHost() {
-		return serverHost;
-	}
+                getNicknameText().setEnabled(true);
+                getServerHostText().setEnabled(true);
+                getServerPortText().setEnabled(true);
+                getEnterChatButton().setEnabled(true);
+            }
+        };
 
-	public void setServerHost(String serverHost) {
-		this.serverHost = serverHost;
-	}
+        new Thread(run).start();
 
-	public Integer getServerPort() {
-		return serverPort;
-	}
+    }
 
-	public void setServerPort(Integer serverPort) {
-		this.serverPort = serverPort;
-	}
+    public Dimension getFrameSize() {
+        return frameSize;
+    }
 
+    public String getFrameTitle() {
+        return frameTitle;
+    }
 
+    public Logger getLogger() {
+        return logger;
+    }
 
-	public Socket getSocket() {
-		return socket;
-	}
+    public JPanel getMainPanel() {
+        return mainPanel;
+    }
 
+    public void setMainPanel(JPanel mainPanel) {
+        this.mainPanel = mainPanel;
+    }
 
+    public JButton getEnterChatButton() {
+        return enterChatButton;
+    }
 
-	public void setSocket(Socket socket) {
-		this.socket = socket;
-	}
+    public void setEnterChatButton(JButton enterChatButton) {
+        this.enterChatButton = enterChatButton;
+    }
 
+    public JLabel getNicknameLabel() {
+        return nicknameLabel;
+    }
 
+    public void setNicknameLabel(JLabel nicknameLabel) {
+        this.nicknameLabel = nicknameLabel;
+    }
 
+    public JLabel getServerPortLabel() {
+        return serverPortLabel;
+    }
 
+    public void setServerPortLabel(JLabel serverPortLabel) {
+        this.serverPortLabel = serverPortLabel;
+    }
+
+    public JLabel getServerHostLabel() {
+        return serverHostLabel;
+    }
+
+    public void setServerHostLabel(JLabel serverHostLabel) {
+        this.serverHostLabel = serverHostLabel;
+    }
+
+    public JTextField getNicknameText() {
+        return nicknameText;
+    }
+
+    public void setNicknameText(JTextField nicknameText) {
+        this.nicknameText = nicknameText;
+    }
+
+    public JTextField getServerHostText() {
+        return serverHostText;
+    }
+
+    public void setServerHostText(JTextField serverHostText) {
+        this.serverHostText = serverHostText;
+    }
+
+    public JTextField getServerPortText() {
+        return serverPortText;
+    }
+
+    public void setServerPortText(JTextField serverPortText) {
+        this.serverPortText = serverPortText;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public String getServerHost() {
+        return serverHost;
+    }
+
+    public void setServerHost(String serverHost) {
+        this.serverHost = serverHost;
+    }
+
+    public Integer getServerPort() {
+        return serverPort;
+    }
+
+    public void setServerPort(Integer serverPort) {
+        this.serverPort = serverPort;
+    }
+
+    public Socket getSocket() {
+        return socket;
+    }
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+    }
 
 }
