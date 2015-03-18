@@ -19,317 +19,318 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import com.hatemcode.chatter.server.Server;
-import com.hatemcode.chatter.server.enumeration.ServerStatus;
+import com.hatemcode.chatter.server.ServerStatus;
 
 @SuppressWarnings("serial")
-public class ServerFrame extends JFrame implements Runnable,ActionListener {
-	
-	// logger
-	private final Logger logger = Logger.getLogger(getClass().getName());
-	
-	// server object
-	private Server server;
-	
-	// frame specifications
-	private final String frameTitle = "Chatter Server";
-	private final Dimension frameSize = new Dimension(500,400);
-	
-	// frame controllers
-	private JPanel mainPanel = new JPanel();
-	private JMenuBar menubar = new JMenuBar();
-	private JLabel serverStatusLabel = new JLabel();
-	private JLabel serverNameLabel = new JLabel("Server Name:");
-	private JLabel serverPortLabel = new JLabel("Server Port:");;
+public class ServerFrame extends JFrame implements Runnable, ActionListener {
+
+    // logger
+    private final Logger logger = Logger.getLogger(getClass().getName());
+
+    // server object
+    private Server server;
+
+    // frame specifications
+    private final String frameTitle = "Chatter Server";
+    private final Dimension frameSize = new Dimension(500, 400);
+
+    // frame controllers
+    private JPanel mainPanel = new JPanel();
+    private JMenuBar menubar = new JMenuBar();
+    private JLabel serverStatusLabel = new JLabel();
+    private JLabel serverNameLabel = new JLabel("Server Name:");
+    private JLabel serverPortLabel = new JLabel("Server Port:");
+    ;
 	private JTextField serverNameText = new JTextField();
-	private JTextField serverPortText = new JTextField();
-	private JButton statusToggleButton = new JButton();
-	private JTextArea logsTextArea = new JTextArea();
-	
-	public ServerFrame(){
-		constructFrame();
-		constructControllers();
-	}
-	
-	public ServerFrame(Server server){
-		setServer(server);
-		constructFrame();
-		constructControllers();
-	}
-	
-	@Override
-	public void run() {
-		refreshControllersBasedOnStatus();
-		constructListners();
-		showFrame();
-	}
-	
-	/**
-	 * Build the frame.
-	 */
-	private void constructFrame(){
+    private JTextField serverPortText = new JTextField();
+    private JButton statusToggleButton = new JButton();
+    private JTextArea logsTextArea = new JTextArea();
 
-		// set frame title
-		setTitle(getFrameTitle());
-		
-		// set frame size
-		setSize(getFrameSize());
-		
-		// make it not resizable
-		setResizable(false);
-		
-		// make the frame on center
-		setLocationRelativeTo(null);
+    public ServerFrame() {
+        constructFrame();
+        constructControllers();
+    }
 
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-	}
-	
-	/**
-	 * Build frame controllers.
-	 */
-	private void constructControllers(){
+    public ServerFrame(Server server) {
+        setServer(server);
+        constructFrame();
+        constructControllers();
+    }
 
-		// set main panel layout
-		getMainPanel().setLayout(new FlowLayout());
-		
-		// server status
-		getMainPanel().add(getServerStatusLabel());
-		
-		// server name
-		getMainPanel().add(getServerNameLabel());
-		getMainPanel().add(getServerNameText());
-		
-		// server port
-		getMainPanel().add(getServerPortLabel());
-		getMainPanel().add(getServerPortText());
-		
-		// server status toggle button
-		getMainPanel().add(getStatusToggleButton());
-		
-		// server logs
-		getLogsTextArea().setEditable(false);
-		getLogsTextArea().setColumns(40);
-		getLogsTextArea().setRows(20);
-		getMainPanel().add(new JScrollPane(getLogsTextArea()));
-		
-		// add main panel to the frame
-		add(getMainPanel());
-	}
+    @Override
+    public void run() {
+        refreshControllersBasedOnStatus();
+        constructListners();
+        showFrame();
+    }
 
-	/**
-	 * Add listeners to the frame controllers. 
-	 */
-	private void constructListners(){
-		
-		// status toggle button
-		getStatusToggleButton().addActionListener(this);
-	}
-	
-	/**
-	 * Refresh controllers based on server status.
-	 */
-	public void refreshControllersBasedOnStatus(){
-		
-		if(server.getServerStatus() == ServerStatus.STOPPED){
-			
-			// enable fields of server name and port
-			getServerNameText().setEnabled(true);
-			getServerPortText().setEnabled(true);
-			
-			getServerStatusLabel().setForeground(Color.RED);
-			getServerStatusLabel().setText("Server is Stopped");
-			getStatusToggleButton().setText("Start");
-			
-		}else if(server.getServerStatus() == ServerStatus.STARTED){
-			
-			getServerNameText().setEnabled(false);
-			getServerPortText().setEnabled(false);
-			
-			getServerStatusLabel().setForeground(Color.GREEN);
-			getServerStatusLabel().setText("Server is Started");
-			getStatusToggleButton().setText("Stop");
-		}
-		
-		getServerNameText().setText(server.getServerName());
-		getServerPortText().setText(server.getServerPort().toString());
+    /**
+     * Build the frame.
+     */
+    private void constructFrame() {
 
-	}
-	
+        // set frame title
+        setTitle(getFrameTitle());
 
-	/**
-	 * Action listener manager.
-	 */
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		
-		// on click status toggle button
-		if(e.getSource() == statusToggleButton){
-			toggleStatus();
-		}
-		
-	}
-	
-	/**
-	 * Toggle status.
-	 */
-	public void toggleStatus(){
-		
-		// if server is stopped start it
-		if(server.getServerStatus() == ServerStatus.STOPPED){
-			startServer();	
-		
-		// if server is started stop it
-		}else if(server.getServerStatus() == ServerStatus.STARTED){
-			stopServer();
+        // set frame size
+        setSize(getFrameSize());
 
-		}
-		
-	}
+        // make it not resizable
+        setResizable(false);
 
-	/**
-	 * Start server.
-	 */
-	public void startServer(){
-		
-		String serverName = getServerNameText().getText();
-		getServer().setServerName(serverName);
-		
-		Integer serverPort = Integer.parseInt(getServerPortText().getText());
-		getServer().setServerPort(serverPort);
-		
-		// if server started
-		if(getServer().start()){
-			logToFrame("Server ("+ getServerNameText().getText() +") is started ..");
-			refreshControllersBasedOnStatus();		
-		}	
+        // make the frame on center
+        setLocationRelativeTo(null);
 
-	}
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
 
-	/**
-	 * Stop server.
-	 */
-	public void stopServer(){
-		
-		// if server stopped
-		if(getServer().stop()){
-			
-			refreshControllersBasedOnStatus();			
-		}
-		
-		
-	}
-	
-	/**
-	 * Log to the frame.
-	 * @param message
-	 */
-	public void logToFrame(String message){
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		Date date = new Date();
-		
-		getLogsTextArea().append("\n" + message + " (" + dateFormat.format(date) + ")");
-	}
-	
-	/**
-	 * Show frame.
-	 */
-	public void showFrame(){
-		
-		// make it visible
-		setVisible(true);
-	}
+    /**
+     * Build frame controllers.
+     */
+    private void constructControllers() {
 
-	/*** Getters & Setters ***/
-	public String getFrameTitle() {
-		return frameTitle;
-	}
+        // set main panel layout
+        getMainPanel().setLayout(new FlowLayout());
 
-	public Dimension getFrameSize() {
-		return frameSize;
-	}
+        // server status
+        getMainPanel().add(getServerStatusLabel());
 
-	public JPanel getMainPanel() {
-		return mainPanel;
-	}
+        // server name
+        getMainPanel().add(getServerNameLabel());
+        getMainPanel().add(getServerNameText());
 
-	public void setMainPanel(JPanel mainPanel) {
-		this.mainPanel = mainPanel;
-	}
+        // server port
+        getMainPanel().add(getServerPortLabel());
+        getMainPanel().add(getServerPortText());
 
-	public JLabel getServerStatusLabel() {
-		return serverStatusLabel;
-	}
+        // server status toggle button
+        getMainPanel().add(getStatusToggleButton());
 
-	public void setServerStatusLabel(JLabel serverStatusLabel) {
-		this.serverStatusLabel = serverStatusLabel;
-	}
+        // server logs
+        getLogsTextArea().setEditable(false);
+        getLogsTextArea().setColumns(40);
+        getLogsTextArea().setRows(20);
+        getMainPanel().add(new JScrollPane(getLogsTextArea()));
 
-	public Server getServer() {
-		return server;
-	}
+        // add main panel to the frame
+        add(getMainPanel());
+    }
 
-	public void setServer(Server server) {
-		this.server = server;
-	}
+    /**
+     * Add listeners to the frame controllers.
+     */
+    private void constructListners() {
 
-	public Logger getLogger() {
-		return logger;
-	}
+        // status toggle button
+        getStatusToggleButton().addActionListener(this);
+    }
 
-	public JLabel getServerNameLabel() {
-		return serverNameLabel;
-	}
+    /**
+     * Refresh controllers based on server status.
+     */
+    public void refreshControllersBasedOnStatus() {
 
-	public void setServerNameLabel(JLabel serverNameLabel) {
-		this.serverNameLabel = serverNameLabel;
-	}
+        if (server.getServerStatus() == ServerStatus.STOPPED) {
 
-	public JLabel getServerPortLabel() {
-		return serverPortLabel;
-	}
+            // enable fields of server name and port
+            getServerNameText().setEnabled(true);
+            getServerPortText().setEnabled(true);
 
-	public void setServerPortLabel(JLabel serverPortLabel) {
-		this.serverPortLabel = serverPortLabel;
-	}
+            getServerStatusLabel().setForeground(Color.RED);
+            getServerStatusLabel().setText("Server is Stopped");
+            getStatusToggleButton().setText("Start");
 
-	public JTextField getServerNameText() {
-		return serverNameText;
-	}
+        } else if (server.getServerStatus() == ServerStatus.STARTED) {
 
-	public void setServerNameText(JTextField serverNameText) {
-		this.serverNameText = serverNameText;
-	}
+            getServerNameText().setEnabled(false);
+            getServerPortText().setEnabled(false);
 
-	public JTextField getServerPortText() {
-		return serverPortText;
-	}
+            getServerStatusLabel().setForeground(Color.GREEN);
+            getServerStatusLabel().setText("Server is Started");
+            getStatusToggleButton().setText("Stop");
+        }
 
-	public void setServerPortText(JTextField serverPortText) {
-		this.serverPortText = serverPortText;
-	}
+        getServerNameText().setText(server.getServerName());
+        getServerPortText().setText(server.getServerPort().toString());
 
-	public JButton getStatusToggleButton() {
-		return statusToggleButton;
-	}
+    }
 
-	public void setStatusToggleButton(JButton statusToggleButton) {
-		this.statusToggleButton = statusToggleButton;
-	}
+    /**
+     * Action listener manager.
+     */
+    @Override
+    public void actionPerformed(ActionEvent e) {
 
-	public JTextArea getLogsTextArea() {
-		return logsTextArea;
-	}
+        // on click status toggle button
+        if (e.getSource() == statusToggleButton) {
+            toggleStatus();
+        }
 
-	public void setLogsTextArea(JTextArea logsTextArea) {
-		this.logsTextArea = logsTextArea;
-	}
+    }
 
-	public JMenuBar getMenubar() {
-		return menubar;
-	}
+    /**
+     * Toggle status.
+     */
+    public void toggleStatus() {
 
-	public void setMenubar(JMenuBar menubar) {
-		this.menubar = menubar;
-	}
+        // if server is stopped start it
+        if (server.getServerStatus() == ServerStatus.STOPPED) {
+            startServer();
 
+            // if server is started stop it
+        } else if (server.getServerStatus() == ServerStatus.STARTED) {
+            stopServer();
+
+        }
+
+    }
+
+    /**
+     * Start server.
+     */
+    public void startServer() {
+
+        String serverName = getServerNameText().getText();
+        getServer().setServerName(serverName);
+
+        Integer serverPort = Integer.parseInt(getServerPortText().getText());
+        getServer().setServerPort(serverPort);
+
+        // if server started
+        if (getServer().start()) {
+            logToFrame("Server (" + getServerNameText().getText() + ") is started ..");
+            refreshControllersBasedOnStatus();
+        }
+
+    }
+
+    /**
+     * Stop server.
+     */
+    public void stopServer() {
+
+        // if server stopped
+        if (getServer().stop()) {
+
+            refreshControllersBasedOnStatus();
+        }
+
+    }
+
+    /**
+     * Log to the frame.
+     *
+     * @param message
+     */
+    public void logToFrame(String message) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+
+        getLogsTextArea().append("\n" + message + " (" + dateFormat.format(date) + ")");
+    }
+
+    /**
+     * Show frame.
+     */
+    public void showFrame() {
+
+        // make it visible
+        setVisible(true);
+    }
+
+    /**
+     * * Getters & Setters **
+     */
+    public String getFrameTitle() {
+        return frameTitle;
+    }
+
+    public Dimension getFrameSize() {
+        return frameSize;
+    }
+
+    public JPanel getMainPanel() {
+        return mainPanel;
+    }
+
+    public void setMainPanel(JPanel mainPanel) {
+        this.mainPanel = mainPanel;
+    }
+
+    public JLabel getServerStatusLabel() {
+        return serverStatusLabel;
+    }
+
+    public void setServerStatusLabel(JLabel serverStatusLabel) {
+        this.serverStatusLabel = serverStatusLabel;
+    }
+
+    public Server getServer() {
+        return server;
+    }
+
+    public void setServer(Server server) {
+        this.server = server;
+    }
+
+    public Logger getLogger() {
+        return logger;
+    }
+
+    public JLabel getServerNameLabel() {
+        return serverNameLabel;
+    }
+
+    public void setServerNameLabel(JLabel serverNameLabel) {
+        this.serverNameLabel = serverNameLabel;
+    }
+
+    public JLabel getServerPortLabel() {
+        return serverPortLabel;
+    }
+
+    public void setServerPortLabel(JLabel serverPortLabel) {
+        this.serverPortLabel = serverPortLabel;
+    }
+
+    public JTextField getServerNameText() {
+        return serverNameText;
+    }
+
+    public void setServerNameText(JTextField serverNameText) {
+        this.serverNameText = serverNameText;
+    }
+
+    public JTextField getServerPortText() {
+        return serverPortText;
+    }
+
+    public void setServerPortText(JTextField serverPortText) {
+        this.serverPortText = serverPortText;
+    }
+
+    public JButton getStatusToggleButton() {
+        return statusToggleButton;
+    }
+
+    public void setStatusToggleButton(JButton statusToggleButton) {
+        this.statusToggleButton = statusToggleButton;
+    }
+
+    public JTextArea getLogsTextArea() {
+        return logsTextArea;
+    }
+
+    public void setLogsTextArea(JTextArea logsTextArea) {
+        this.logsTextArea = logsTextArea;
+    }
+
+    public JMenuBar getMenubar() {
+        return menubar;
+    }
+
+    public void setMenubar(JMenuBar menubar) {
+        this.menubar = menubar;
+    }
 
 }

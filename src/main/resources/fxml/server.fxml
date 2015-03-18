@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="root"  prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hatemcode.chatter.server.ui.ServerPresenter">
+    <top>
+        <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="50.0" spacing="5.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label alignment="CENTER" contentDisplay="CENTER" text="Server name" HBox.hgrow="ALWAYS" />
+                <TextField fx:id="serverNameTextField" promptText="Chatter" text="" />
+                <Separator maxHeight="30.0" orientation="VERTICAL" prefHeight="30.0" />
+                <Label text="Server port" HBox.hgrow="ALWAYS" />
+                <TextField fx:id="portNameTextField" prefWidth="80.0" promptText="5555" text="" />
+                <Separator maxHeight="30.0" orientation="VERTICAL" prefHeight="30.0">
+                    <HBox.margin>
+                        <Insets right="10.0" />
+                    </HBox.margin>
+                </Separator>
+                <Button fx:id="toggleServerStateButton" minWidth="100.0" mnemonicParsing="false" prefWidth="100.0" text="Start" HBox.hgrow="ALWAYS" onAction="#handleToggleServerStatus" />
+            </children>
+            <BorderPane.margin>
+                <Insets left="20.0" right="10.0" top="10.0" />
+            </BorderPane.margin>
+        </HBox>
+    </top>
+    <center>
+        <TextArea BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="10.0" />
+            </BorderPane.margin>
+        </TextArea>
+    </center>
+    <bottom>
+        <Label fx:id="severStatusLabel"  alignment="CENTER" text="Server is stopped" BorderPane.alignment="BASELINE_LEFT">
+            <BorderPane.margin>
+                <Insets left="20.0" />
+            </BorderPane.margin>
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Label>
+    </bottom>
+</BorderPane>
