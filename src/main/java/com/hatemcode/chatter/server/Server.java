@@ -3,9 +3,9 @@ package com.hatemcode.chatter.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 
-import javax.swing.JOptionPane;
-
 import com.hatemcode.chatter.server.frame.ServerFrame;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Represent the server application.
@@ -13,6 +13,8 @@ import com.hatemcode.chatter.server.frame.ServerFrame;
  * @author Hatem Al Amri
  */
 public class Server {
+
+    private static final Logger LOG = Logger.getLogger(Server.class.getName());
 
     private final String DEFAULT_SERVER_NAME = "Chatter";
     private final Integer DEFAULT_SERVER_PORT = 5555;
@@ -68,16 +70,11 @@ public class Server {
             return true;
 
         } catch (IOException e) {
-
-            // port is used by another app
-            JOptionPane.showMessageDialog(null, "Port " + getServerPort() + " is used by another application.", "Error", JOptionPane.ERROR_MESSAGE);
+            LOG.log(Level.SEVERE, "Port {} is used by another application.", getServerPort());
 
         } catch (IllegalArgumentException e) {
-
-            // server port is out of range
-            JOptionPane.showMessageDialog(null, "Port " + getServerPort() + " is not out of the range.", "Error", JOptionPane.ERROR_MESSAGE);
+            LOG.log(Level.SEVERE, "Port {} is not out of the range.", getServerPort());
         }
-
         // failed start of server
         return false;
 
@@ -105,8 +102,7 @@ public class Server {
                 return true;
 
             } catch (IOException e) {
-                JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-
+                LOG.log(Level.SEVERE, e.getMessage());
             }
         }
 
