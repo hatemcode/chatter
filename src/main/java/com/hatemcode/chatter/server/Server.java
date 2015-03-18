@@ -2,7 +2,6 @@ package com.hatemcode.chatter.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
@@ -15,37 +14,23 @@ import com.hatemcode.chatter.server.frame.ServerFrame;
  */
 public class Server {
 
-    private static final Logger LOG = Logger.getLogger(Server.class.getName());
+    private final String DEFAULT_SERVER_NAME = "Chatter";
+    private final Integer DEFAULT_SERVER_PORT = 5555;
 
-    // server attributes
     private String serverName;
     private Integer serverPort;
     private ServerStatus serverStatus = ServerStatus.STOPPED;
     private ServerSocket socket;
     private ServerSession serverSession;
 
-    // server frame
     private ServerFrame serverFrame;
 
-    // constants
-    private final String DEFAULT_SERVER_NAME = "Chatter";
-    private final Integer DEFAULT_SERVER_PORT = 5555;
-
-    /**
-     * Default constructor.
-     */
     public Server() {
         this.serverName = DEFAULT_SERVER_NAME;
         this.serverPort = DEFAULT_SERVER_PORT;
         this.serverFrame = new ServerFrame(this);
     }
 
-    /**
-     * Constructor with server name and server port.
-     *
-     * @param serverName Server name
-     * @param serverPort Server port
-     */
     public Server(String serverName, Integer serverPort) {
 
         this.serverName = serverName;
@@ -53,11 +38,6 @@ public class Server {
         this.serverFrame = new ServerFrame(this);
     }
 
-    /**
-     * Server application driver.
-     *
-     * @param args
-     */
     public static void main(String[] args) {
         Server server = new Server();
         server.getServerFrame().run();

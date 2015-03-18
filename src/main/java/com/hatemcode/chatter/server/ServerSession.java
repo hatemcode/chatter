@@ -9,7 +9,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
-import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
@@ -21,8 +20,6 @@ import com.hatemcode.chatter.server.frame.ServerFrame;
  * @author Hatem Al Amri
  */
 public class ServerSession extends Thread {
-
-    private static final Logger LOG = Logger.getLogger(ServerSession.class.getName());
 
     private ServerSocket serverSocket;
     private HashMap<Integer, Client> clients = new HashMap<>();

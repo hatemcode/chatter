@@ -1,15 +1,12 @@
 package com.hatemcode.chatter.server;
 
 import java.net.Socket;
-import java.util.logging.Logger;
 
 import com.hatemcode.chatter.responder.MessageResponder;
 import com.hatemcode.chatter.responder.imp.ClientMessageResponder;
 import com.hatemcode.chatter.server.frame.ServerFrame;
 
 public class ClientMessagesHandler extends Thread {
-
-    private static final Logger LOG = Logger.getLogger(ClientMessagesHandler.class.getName());
 
     private Socket socket;
     private ServerSession serverSession;
@@ -23,6 +20,7 @@ public class ClientMessagesHandler extends Thread {
         this.messageResponder = new ClientMessageResponder(this);
     }
 
+    @Override
     public void run() {
         getServerFrame().logToFrame("new client message handler ..");
         handleMessages();
